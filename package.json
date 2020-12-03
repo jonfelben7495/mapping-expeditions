@@ -1,0 +1,37 @@
+{
+  "name": "mapping-expeditions",
+  "version": "1.0.0",
+  "description": "A webmapping tool to track and visualize historical journeys.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonfelben7495/mapping-expeditions.git"
+  },
+  "author": "Jonas Schmidt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonfelben7495/mapping-expeditions/issues"
+  },
+  "homepage": "https://github.com/jonfelben7495/mapping-expeditions#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "leaflet": "^1.7.1",
+    "lodash": "^4.17.20",
+    "mssql": "^6.2.3"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^5.0.1",
+    "html-webpack-plugin": "^4.5.0",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.9.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "keywords": []
+}
