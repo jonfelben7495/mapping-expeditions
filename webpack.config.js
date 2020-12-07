@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: 'development',
@@ -13,11 +14,13 @@ module.exports = {
         port: 3000,
         open: true
     },
+    experiments: {
+        topLevelAwait: true
+    },
     plugins: [
-        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: 'Development',
-        }),
+        })
     ],
     output: {
         filename: '[name].bundle.js',

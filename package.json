@@ -19,10 +19,13 @@
   },
   "homepage": "https://github.com/jonfelben7495/mapping-expeditions#readme",
   "dependencies": {
+    "buffer": "^6.0.3",
+    "copy-webpack-plugin": "^6.3.2",
     "express": "^4.17.1",
     "leaflet": "^1.7.1",
     "lodash": "^4.17.20",
-    "mssql": "^6.2.3"
+    "mssql": "^6.2.3",
+    "stream-http": "^3.1.1"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
