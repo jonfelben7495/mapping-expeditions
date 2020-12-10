@@ -67,11 +67,11 @@ async function loadExpedition(map) {
         shadowSize: [41, 41]
     });
 
-    let startMarker = L.marker([data[0].startlat, data[0].startlong], {icon: myIcon}).addTo(map)
-    let endMarker = L.marker([data[0].endlat, data[0].endlong], {icon: myIcon}).addTo(map)
+    let startMarker = L.marker([data[0].latitude, data[0].longitude], {icon: myIcon}).addTo(map)
+    let endMarker = L.marker([data[1].latitude, data[1].longitude], {icon: myIcon}).addTo(map)
 
-    startMarker.bindPopup(data[0].startplace + "<br/>Ausgangspunkt von: " + data[0].name)
-    endMarker.bindPopup(data[0].endplace + "<br/>Endpunkt von: " + data[0].name)
+    startMarker.bindPopup(data[0].name + "<br/>Ausgangspunkt von: " + data[0].exp_name)
+    endMarker.bindPopup(data[1].name + "<br/>Endpunkt von: " + data[0].exp_name)
 }
 
 document.body.appendChild(component());
