@@ -23,6 +23,7 @@
     "copy-webpack-plugin": "^6.3.2",
     "express": "^4.17.1",
     "leaflet": "^1.7.1",
+    "leaflet-draw": "^1.0.4",
     "leaflet-geosearch": "^3.1.0",
     "lodash": "^4.17.20",
     "mssql": "^6.2.3",

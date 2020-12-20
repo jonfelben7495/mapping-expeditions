@@ -1,4 +1,5 @@
 #map {
     height: 70vh;
+    min-height: 600px;
     width: 50%
 }
