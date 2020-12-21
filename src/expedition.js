@@ -27,7 +27,7 @@ async function loadExpeditionMarkers(exp_id, map) {
     let markers = [];
     for (let i = 0; i < expeditionMarkers.length; i++) {
         let marker = L.marker([expeditionMarkers[i].latitude, expeditionMarkers[i].longitude], {icon: myIcon}).addTo(map)
-        marker.bindPopup(expeditionMarkers[i].name + "<br/>" + expeditionMarkers[i].sequence + ". Station von <i>" + expeditionMarkers[i].exp_name + "</i>")
+        marker.bindPopup("<b>" + expeditionMarkers[i].name + "<br/> " + expeditionMarkers[i].sequence + ". Station von <i>" + expeditionMarkers[i].exp_name + "</i></b>"+ "<br/>" + expeditionMarkers[i].place_info )
         markers.push(marker)
     }
 
