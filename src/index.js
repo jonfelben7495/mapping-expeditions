@@ -70,7 +70,9 @@ async function loadExpedition(map) {
     let startMarker = L.marker([data[0].latitude, data[0].longitude], {icon: myIcon}).addTo(map)
     let endMarker = L.marker([data[1].latitude, data[1].longitude], {icon: myIcon}).addTo(map)
 
-    startMarker.bindPopup(data[0].name + "<br/>Ausgangspunkt2 von: " + data[0].exp_name)
+
+
+    startMarker.bindPopup(data[0].name + "<br/>Ausgangspunkt von: " + data[0].exp_name)
     endMarker.bindPopup(data[1].name + "<br/>Endpunkt von: " + data[0].exp_name)
 }
 
