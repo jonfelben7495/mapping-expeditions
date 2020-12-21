@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="83252615-6256-4db0-8799-00f050b7f5c4" name="Default Changelist" comment="">
+    <list default="true" id="83252615-6256-4db0-8799-00f050b7f5c4" name="Default Changelist" comment="marker">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/expedition.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/expedition.js" afterDir="false" />
     </list>
@@ -69,6 +69,14 @@
       <workItem from="1608454774713" duration="16478000" />
       <workItem from="1608546047609" duration="7309000" />
     </task>
+    <task id="LOCAL-00001" summary="marker">
+      <created>1608560339927</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1608560339927</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -85,6 +93,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="marker" />
+    <option name="LAST_COMMIT_MESSAGE" value="marker" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
