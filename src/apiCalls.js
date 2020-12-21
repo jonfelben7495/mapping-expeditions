@@ -23,7 +23,7 @@ export async function sendRoute(exp_id, seq, lat, lng){
         "lat": lat,
         "lng": lng
     }
-    sendRequest("http://mapping-expeditions.de/api/saveRoute.php",obj)
+    await sendRequest("http://mapping-expeditions.de/api/saveRoute.php", obj)
 
 }
 

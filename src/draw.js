@@ -31,8 +31,8 @@ export function addDrawEventListener(map, drawnItems){
         map.addLayer(layer);
         layer.addTo(drawnItems)
         for (let i = lastSequence; i < lastSequence + layer._latlngs.length; i++) {
-            sendRoute(activeExpedition, i + 1, layer._latlngs[i - lastSequence].lat, layer._latlngs[i - lastSequence].lng)
+            await sendRoute(activeExpedition, i + 1, layer._latlngs[i - lastSequence].lat, layer._latlngs[i - lastSequence].lng)
         }
-        loadExpeditionRoute(activeExpedition, map)
+        await loadExpeditionRoute(activeExpedition, map)
     });
 }
