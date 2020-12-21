@@ -32,6 +32,7 @@ async function loadExpeditionMarkers(exp_id, map) {
             expeditionMarkers[i].place_info + "<br/>" +
             "<a style=\'text-align: right; display:block;\' href=\'" + expeditionMarkers[i].external_info_src + "'><i> Mehr Infos zur Expedition...</i></a>"
         )
+        marker.bindPopup(expeditionMarkers[i].name + "<br/>" + expeditionMarkers[i].sequence + ". Station von <i>" + expeditionMarkers[i].exp_name + "</i>")
         markers.push(marker)
     }
 
