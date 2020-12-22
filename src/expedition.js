@@ -60,8 +60,6 @@ export async function loadExpeditionRoute(exp_id, map) {
 
 function copyExpeditionMarkers(markers, map){
     for (let i = 0; i < markers.length; i++) {
-        let markerPlus360 = L.marker([markers[i]._latlng.lat,markers[i]._latlng.lng+360], {icon: myIcon}).addTo(map)
-        markerPlus360.bindPopup(markers[i]._popup._content)
         let markerMinus360 = L.marker([markers[i]._latlng.lat,markers[i]._latlng.lng-360], {icon: myIcon}).addTo(map)
         markerMinus360.bindPopup(markers[i]._popup._content)
     }
