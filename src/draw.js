@@ -5,34 +5,94 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css'
 import marker from 'leaflet/dist/images/marker-icon.png'
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
-import {getLastSequenceOfRoute, sendRoute} from "./apiCalls";
+import {
+    getLastMarkerSequence,
+    getLastPlaceId,
+    getLastSequenceOfRoute,
+    sendMarker,
+    sendPlace,
+    sendRoute
+} from "./apiCalls";
 import {loadExpeditionRoute} from "./expedition";
 
-export function initDrawControl(map){
+
+export function initDrawControl(map, markerIcon){
     let drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
     let drawControl = new L.Control.Draw({
+        draw: {
+          polygon: false,
+          rectangle: false,
+          circle: false,
+          circlemarker: false
+        },
         edit: {
             featureGroup: drawnItems
         }
     });
+    console.log(markerIcon)
     map.addControl(drawControl);
 
     return drawnItems;
 }
 
 export function addDrawEventListener(map, drawnItems){
-    map.on(L.Draw.Event.CREATED, async function (e) {
-        let activeExpedition = 1;
-        let lastSequence = await getLastSequenceOfRoute(activeExpedition);
-
+    const submitButton = document.getElementById('button-submit');
+    map.on('draw:created', async function (e) {
         let type = e.layerType,
             layer = e.layer;
+        layer.type = type;
         map.addLayer(layer);
         layer.addTo(drawnItems)
-        for (let i = lastSequence; i < lastSequence + layer._latlngs.length; i++) {
-            await sendRoute(activeExpedition, i + 1, layer._latlngs[i - lastSequence].lat, layer._latlngs[i - lastSequence].lng)
-        }
-        await loadExpeditionRoute(activeExpedition, map)
     });
+
+    map.on('draw:drawstop', function (e) {
+        submitButton.classList.remove("hide")
+    })
+
+    submitButton.addEventListener('click', async function () {
+        let activeExpedition = 1;
+        let lastMarkerSequence = await getLastMarkerSequence(activeExpedition);
+        let lastPlaceId = await getLastPlaceId()
+        let lastRouteSequence = await getLastSequenceOfRoute(activeExpedition);
+        let layers = drawnItems._layers;
+        let lines = [], markers = [], lineCoordinates = [], markerCoordinates = [];
+
+        sortLayers(markers, lines, layers);
+
+        for (let i = 0; i < markers.length; i++) {
+            markerCoordinates.push(markers[i]._latlng);
+        }
+
+        for (let i = 0; i < lines.length; i++) {
+            for (let j = 0; j < lines[i]._latlngs.length; j++) {
+                lineCoordinates.push(lines[i]._latlngs[j]);
+            }
+        }
+
+        if(markerCoordinates.length > 0){
+            for (let i = 0; i < markerCoordinates.length; i++){
+                await sendPlace(lastPlaceId+i+1,"Place", markerCoordinates[i].lat, markerCoordinates[i].lng)
+                await sendMarker(activeExpedition, lastPlaceId+i+1, lastMarkerSequence+i+1)
+            }
+        }
+
+        if(lineCoordinates.length > 0){
+            for (let i = lastRouteSequence; i < lastRouteSequence + lineCoordinates.length; i++){
+                await sendRoute(activeExpedition, i + 1, lineCoordinates[i - lastRouteSequence].lat, lineCoordinates[i - lastRouteSequence].lng)
+            }
+        }
+
+        await loadExpeditionRoute(activeExpedition, map)
+    })
+}
+
+function sortLayers(markers, lines, layers){
+    for (let i = 0; i < Object.keys(layers).length; i++) {
+        if (Object.values(layers)[i].type === "marker") {
+            markers.push(Object.values(layers)[i]);
+        } else if (Object.values(layers)[i].type === "polyline") {
+            lines.push(Object.values(layers)[i]);
+        }
+    }
 }

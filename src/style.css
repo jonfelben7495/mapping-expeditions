@@ -3,3 +3,7 @@
     min-height: 600px;
     width: 50%
 }
+
+.hide {
+    display: none;
+}

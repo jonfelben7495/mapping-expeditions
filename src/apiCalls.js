@@ -6,6 +6,17 @@ export async function getExpeditionRoute(exp_id) {
     return await makeRequest("GET", "http://mapping-expeditions.de/api/loadRoute.php?q=" + exp_id);
 }
 
+export async function getLastMarkerSequence(exp_id){
+    let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastMarker.php?q=" + exp_id);
+    result = JSON.parse(result)[0]
+    console.log(result)
+    result = result[Object.keys(result)[0]];
+    if (result !== null) {
+        return parseInt(result);
+    }
+    return 0;
+}
+
 export async function getLastSequenceOfRoute(exp_id){
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastSequence.php?q=" + exp_id);
     result = JSON.parse(result)[0]
@@ -15,6 +26,38 @@ export async function getLastSequenceOfRoute(exp_id){
     }
     return 0;
 }
+
+export async function getLastPlaceId() {
+    let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastPlaceId.php");
+    result = JSON.parse(result)[0]
+    result = result[Object.keys(result)[0]];
+    if (result !== null) {
+        return parseInt(result);
+    }
+    return 0;
+}
+
+export async function sendMarker(exp_id, placeid, seq){
+    let obj = {
+        "exp_id": exp_id,
+        "placeid": placeid,
+        "sequence": seq,
+    }
+    await sendRequest("http://mapping-expeditions.de/api/saveMarker.php", obj)
+
+}
+
+export async function sendPlace(placeid, name, lat, lng){
+    let obj = {
+        "placeid": placeid,
+        "name": name,
+        "lat": lat,
+        "lng": lng
+    }
+    await sendRequest("http://mapping-expeditions.de/api/savePlace.php", obj)
+
+}
+
 
 export async function sendRoute(exp_id, seq, lat, lng){
     let obj = {
