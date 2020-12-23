@@ -23,6 +23,7 @@ async function loadExpeditionMarkers(exp_id, map) {
     let expeditionMarkers = await getExpeditionMarkers(exp_id)
     expeditionMarkers = JSON.parse(expeditionMarkers);
     expeditionMarkers.sort(compareBySequence);
+    console.log(expeditionMarkers)
 
     let markers = [];
     for (let i = 0; i < expeditionMarkers.length; i++) {
@@ -47,7 +48,6 @@ export async function loadExpeditionRoute(exp_id, map) {
         expeditionRouteCoordinates.push([expeditionRoute[i].lat, expeditionRoute[i].lng]);
     }
 
-    console.log(expeditionRouteCoordinates)
     let polyline = L.polyline(expeditionRouteCoordinates, {color: 'red'}).addTo(map)
 
     return polyline;

@@ -29,3 +29,11 @@ export function copyPath(array, addLong) {
     }
     return array;
 }
+
+export function getSizeOfObject(obj) {
+    let size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+}
