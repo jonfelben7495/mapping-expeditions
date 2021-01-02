@@ -9,7 +9,6 @@ export async function getExpeditionRoute(exp_id) {
 export async function getLastMarkerSequence(exp_id){
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastMarker.php?q=" + exp_id);
     result = JSON.parse(result)[0]
-    console.log(result)
     result = result[Object.keys(result)[0]];
     if (result !== null) {
         return parseInt(result);

@@ -30,7 +30,6 @@ export function initDrawControl(map, markerIcon){
             featureGroup: drawnItems
         }
     });
-    console.log(markerIcon)
     map.addControl(drawControl);
 
     return drawnItems;

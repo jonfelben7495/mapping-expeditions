@@ -1,6 +1,6 @@
 import L from "leaflet";
 import {getExpeditionMarkers, getExpeditionRoute} from "./apiCalls";
-import {calculateLatForDateline, compareBySequence, copyPath} from "./utilities";
+import {calculateLatForDateline, compareBySequence, concatArray, copyPath} from "./utilities";
 import marker from 'leaflet/dist/images/marker-icon.png'
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
 let myIcon = L.icon({
@@ -23,7 +23,6 @@ async function loadExpeditionMarkers(exp_id, map) {
     let expeditionMarkers = await getExpeditionMarkers(exp_id)
     expeditionMarkers = JSON.parse(expeditionMarkers);
     expeditionMarkers.sort(compareBySequence);
-    console.log(expeditionMarkers)
 
     let markers = [];
     for (let i = 0; i < expeditionMarkers.length; i++) {
@@ -44,8 +43,27 @@ export async function loadExpeditionRoute(exp_id, map) {
     expeditionRoute.sort(compareBySequence);
 
     let expeditionRouteCoordinates = [];
+    let crossDateLine;
     for (let i = 0; i < expeditionRoute.length; i++){
         expeditionRouteCoordinates.push([expeditionRoute[i].lat, expeditionRoute[i].lng]);
+        if(expeditionRoute[i+1]) {
+            let long1 = parseFloat(expeditionRoute[i].lng);
+            let long2 = parseFloat(expeditionRoute[i+1].lng);
+            let diff = long1 - long2;
+            if (Math.abs(diff) > 180) {
+                console.log(diff)
+                let latitude = calculateLatForDateline(expeditionRoute[i], expeditionRoute[i+1])
+                expeditionRouteCoordinates.push([latitude, -180])
+                expeditionRouteCoordinates.push([latitude, 180])
+                crossDateLine = i+2;
+            }
+        }
+    }
+
+    if (crossDateLine !== "" && crossDateLine !== undefined) {
+        let expeditionCoordinates2 = expeditionRouteCoordinates.slice(crossDateLine)
+        expeditionRouteCoordinates = expeditionRouteCoordinates.slice(0, crossDateLine)
+        expeditionRouteCoordinates = [expeditionRouteCoordinates, expeditionCoordinates2]
     }
 
     let polyline = L.polyline(expeditionRouteCoordinates, {color: 'red'}).addTo(map)
@@ -64,44 +82,37 @@ function copyExpeditionMarkers(markers, map){
 
 function copyExpeditionRoute(route, map) {
     let expeditionCoordinates = [];
-    let crossDateLine;
 
-    for (let i = 0; i < route._latlngs.length; i++) {
-        expeditionCoordinates.push([route._latlngs[i].lat, route._latlngs[i].lng])
-        if(route._latlngs[i+1]) {
-            let long1 = parseFloat(route._latlngs[i].lng);
-            let long2 = parseFloat(route._latlngs[i+1].lng);
-            let diff = long1 - long2;
-            if (Math.abs(diff) > 180) {
-                let latitude = calculateLatForDateline(route._latlngs[i], route._latlngs[i+1])
-                expeditionCoordinates.push([latitude, -180])
-                expeditionCoordinates.push([latitude, 180])
-                crossDateLine = i+2;
-            }
+    if (Array.isArray(route._latlngs[0])){
+        for (let i = 0; i < route._latlngs.length; i++) {
+            expeditionCoordinates.push(route._latlngs[i])
         }
-    }
-
-    if (crossDateLine !== "" && crossDateLine !== undefined) {
-        let expeditionCoordinates2 = expeditionCoordinates.slice(crossDateLine)
-        expeditionCoordinates = expeditionCoordinates.slice(0, crossDateLine)
-        expeditionCoordinates = [expeditionCoordinates, expeditionCoordinates2]
+    } else {
+        for (let i = 0; i < route._latlngs.length; i++) {
+            expeditionCoordinates.push([route._latlngs[i].lat, route._latlngs[i].lng])
+        }
     }
 
     let coordinatesPlus360 = [];
     let coordinatesMinus360 = [];
-    if(Array.isArray(expeditionCoordinates)) {
+    if(Array.isArray(expeditionCoordinates[0])) {
         for (let i=0; i < expeditionCoordinates.length; i++){
-            let plus360 = JSON.parse(JSON.stringify(expeditionCoordinates[i]));
-            plus360 = copyPath(plus360, 360)
+            coordinatesPlus360 = [];
+            coordinatesMinus360 = [];
+            console.log(expeditionCoordinates[i])
+            for(let j=0; j<expeditionCoordinates[i].length; j++) {
+                let plus360 = JSON.parse(JSON.stringify(expeditionCoordinates[i][j]));
+                plus360 = copyPath(plus360, 360)
 
-            let minus360 = JSON.parse(JSON.stringify(expeditionCoordinates[i]));
-            minus360 = copyPath(minus360, -360)
+                let minus360 = JSON.parse(JSON.stringify(expeditionCoordinates[i][j]));
+                minus360 = copyPath(minus360, -360)
 
-            coordinatesPlus360.push(plus360);
-            coordinatesMinus360.push(minus360);
+                coordinatesPlus360.push(plus360);
+                coordinatesMinus360.push(minus360);
+            }
+            L.polyline(coordinatesPlus360, {color: 'red'}).addTo(map)
+            L.polyline(coordinatesMinus360, {color: 'red'}).addTo(map)
         }
-        L.polyline(coordinatesPlus360, {color: 'red'}).addTo(map)
-        L.polyline(coordinatesMinus360, {color: 'red'}).addTo(map)
     } else {
         let plus360 = JSON.parse(JSON.stringify(expeditionCoordinates));
         plus360 = copyPath(plus360, 360)
@@ -111,9 +122,6 @@ function copyExpeditionRoute(route, map) {
 
         coordinatesPlus360.push(plus360);
         coordinatesMinus360.push(minus360);
-
-        console.log(coordinatesPlus360);
-        console.log(coordinatesMinus360);
 
         L.polyline(coordinatesPlus360, {color: 'red'}).addTo(map)
         L.polyline(coordinatesMinus360, {color: 'red'}).addTo(map)

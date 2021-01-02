@@ -26,8 +26,6 @@ export let IconDefault = Icon.extend({
         // blue icon images. If you are placing these images in a non-standard
         // way, set this option to point to the right path.
         var url = (this.options.imagePath || L.Icon.Default.imagePath);
-
-        console.log(url)
         return url.slice(0, - 2);
     },
 
