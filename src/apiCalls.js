@@ -6,6 +6,16 @@ export async function getExpeditionRoute(exp_id) {
     return await makeRequest("GET", "http://mapping-expeditions.de/api/loadRoute.php?q=" + exp_id);
 }
 
+export async function getLastExpeditionId(){
+    let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastExpedition.php");
+    result = JSON.parse(result)[0]
+    result = result[Object.keys(result)[0]];
+    if (result !== null) {
+        return parseInt(result);
+    }
+    return 0;
+}
+
 export async function getLastMarkerSequence(exp_id){
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastMarker.php?q=" + exp_id);
     result = JSON.parse(result)[0]
@@ -34,6 +44,18 @@ export async function getLastPlaceId() {
         return parseInt(result);
     }
     return 0;
+}
+
+export async function sendExpedition(exp_id, name, leader, startdate, enddate){
+    let obj = {
+        "exp_id": exp_id,
+        "name": name,
+        "leader": leader,
+        "startdate": startdate,
+        "enddate": enddate
+    }
+    console.log(obj)
+    await sendRequest("http://mapping-expeditions.de/api/saveExpedition.php", obj)
 }
 
 export async function sendMarker(exp_id, placeid, seq){

@@ -8,7 +8,7 @@ import Shadow from 'leaflet/dist/images/marker-shadow.png'
 import {
     getLastMarkerSequence,
     getLastPlaceId,
-    getLastSequenceOfRoute,
+    getLastSequenceOfRoute, sendExpedition,
     sendMarker,
     sendPlace,
     sendRoute
@@ -35,7 +35,7 @@ export function initDrawControl(map, markerIcon){
     return drawnItems;
 }
 
-export function addDrawEventListener(map, drawnItems){
+export function addDrawEventListener(map, drawnItems, expeditionId, isNewExpedition){
     const submitButton = document.getElementById('button-submit');
     map.on('draw:created', async function (e) {
         let type = e.layerType,
@@ -50,10 +50,6 @@ export function addDrawEventListener(map, drawnItems){
     })
 
     submitButton.addEventListener('click', async function () {
-        let activeExpedition = 1;
-        let lastMarkerSequence = await getLastMarkerSequence(activeExpedition);
-        let lastPlaceId = await getLastPlaceId()
-        let lastRouteSequence = await getLastSequenceOfRoute(activeExpedition);
         let layers = drawnItems._layers;
         let lines = [], markers = [], lineCoordinates = [], markerCoordinates = [];
 
@@ -69,21 +65,60 @@ export function addDrawEventListener(map, drawnItems){
             }
         }
 
-        if(markerCoordinates.length > 0){
-            for (let i = 0; i < markerCoordinates.length; i++){
-                await sendPlace(lastPlaceId+i+1,"Place", markerCoordinates[i].lat, markerCoordinates[i].lng)
-                await sendMarker(activeExpedition, lastPlaceId+i+1, lastMarkerSequence+i+1)
-            }
+        if(isNewExpedition){
+            await addNewExpedition(expeditionId, markerCoordinates, lineCoordinates, map)
+        } else {
+            await addToExistingExpedition(expeditionId, markerCoordinates, lineCoordinates, map)
         }
-
-        if(lineCoordinates.length > 0){
-            for (let i = lastRouteSequence; i < lastRouteSequence + lineCoordinates.length; i++){
-                await sendRoute(activeExpedition, i + 1, lineCoordinates[i - lastRouteSequence].lat, lineCoordinates[i - lastRouteSequence].lng)
-            }
-        }
-
-        await loadExpeditionRoute(activeExpedition, map)
     })
+}
+
+async function addNewExpedition(expeditionId, markerCoordinates, lineCoordinates, map){
+    let lastPlaceId = await getLastPlaceId();
+    let lastMarkerSequence = 0;
+    let lastRouteSequence = 0;
+    let expeditionName = document.getElementById("newExpedition-name").value;
+    let expeditionLeader = document.getElementById("newExpedition-leader").value;
+    let expeditionStart = document.getElementById("newExpedition-startDate").value;
+    let expeditionEnd = document.getElementById("newExpedition-endDate").value;
+
+    await sendExpedition(expeditionId,expeditionName,expeditionLeader,expeditionStart,expeditionEnd);
+
+    if(markerCoordinates.length > 0){
+        for (let i = 0; i < markerCoordinates.length; i++){
+            await sendPlace(lastPlaceId+i+1,"Place", markerCoordinates[i].lat, markerCoordinates[i].lng)
+            await sendMarker(expeditionId, lastPlaceId+i+1, lastMarkerSequence+i+1)
+        }
+    }
+
+    if(lineCoordinates.length > 0){
+        for (let i = lastRouteSequence; i < lastRouteSequence + lineCoordinates.length; i++){
+            await sendRoute(expeditionId, i + 1, lineCoordinates[i - lastRouteSequence].lat, lineCoordinates[i - lastRouteSequence].lng)
+        }
+    }
+
+    await loadExpeditionRoute(expeditionId, map)
+}
+
+async function addToExistingExpedition(expeditionId, markerCoordinates, lineCoordinates, map){
+    let lastMarkerSequence = await getLastMarkerSequence(expeditionId);
+    let lastPlaceId = await getLastPlaceId()
+    let lastRouteSequence = await getLastSequenceOfRoute(expeditionId);
+
+    if(markerCoordinates.length > 0){
+        for (let i = 0; i < markerCoordinates.length; i++){
+            await sendPlace(lastPlaceId+i+1,"Place", markerCoordinates[i].lat, markerCoordinates[i].lng)
+            await sendMarker(expeditionId, lastPlaceId+i+1, lastMarkerSequence+i+1)
+        }
+    }
+
+    if(lineCoordinates.length > 0){
+        for (let i = lastRouteSequence; i < lastRouteSequence + lineCoordinates.length; i++){
+            await sendRoute(expeditionId, i + 1, lineCoordinates[i - lastRouteSequence].lat, lineCoordinates[i - lastRouteSequence].lng)
+        }
+    }
+
+    await loadExpeditionRoute(expeditionId, map)
 }
 
 function sortLayers(markers, lines, layers){

@@ -8,31 +8,48 @@ import marker from 'leaflet/dist/images/marker-icon.png'
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
 import {addDrawEventListener, initDrawControl} from "./draw";
 import {loadExpedition} from "./expedition";
-import {createSubmitButton} from "./interface";
+import {createAddToExpeditionButton, createNewExpeditionButton, createSubmitButton} from "./interface";
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
     shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-function initApp(id){
-    createMapObject(id);
-    createInterface()
-    let mapObject = initMapObject(id);
-    let drawnItems = initDrawControl(mapObject);
-    addDrawEventListener(mapObject, drawnItems);
+function initApp(mapid, appid){
+    createApp(appid);
+    createMapObject(mapid, appid);
+    let mapObject = initMapObject(mapid);
+    createInterface(mapObject, appid, 'interface')
 
     loadExpedition(1, mapObject)
 }
 
-function createMapObject(id){
-    const mapObject = document.createElement('div');
-    mapObject.id = id;
-    document.body.appendChild(mapObject);
+function createApp(id){
+    const app = document.createElement('div');
+    app.id = id;
+    document.body.appendChild(app);
 }
 
-function createInterface(){
-    createSubmitButton('button-submit', 'Speichern')
+function createMapObject(mapid, appid){
+    const mapObject = document.createElement('div');
+    mapObject.id = mapid;
+
+    const app = document.getElementById(appid);
+    app.appendChild(mapObject);
+}
+
+function createInterface(map, appid, interfaceid){
+    const userInterface = document.createElement('div');
+    userInterface.id = interfaceid;
+    const newExpButton = createNewExpeditionButton('button-newExpedition', 'Neue Expedition anlegen', map, interfaceid);
+    const addToExpButton = createAddToExpeditionButton('button-addToExpedition', 'Zu bestehender Expedition hinzufügen', map, interfaceid)
+    const submitButton = createSubmitButton('button-submit', 'Speichern')
+
+    const app = document.getElementById(appid);
+    userInterface.appendChild(newExpButton);
+    userInterface.appendChild(addToExpButton);
+    userInterface.appendChild(submitButton);
+    app.appendChild(userInterface)
 }
 
 function initMapObject(id){
@@ -48,4 +65,4 @@ function initMapObject(id){
     return map;
 }
 
-initApp('map')
+initApp('map', 'application')
