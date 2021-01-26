@@ -62,6 +62,8 @@ export async function sendExpedition(exp_id, name, leader, startdate, enddate){
 }
 
 export async function sendMarker(exp_id, placeid, seq, name, date, info, src, hasImages){
+    hasImages = hasImages ? 1 : 0;
+    console.log(hasImages)
     let obj = {
         "exp_id": exp_id,
         "placeid": placeid,
@@ -92,7 +94,6 @@ export async function saveImages(files, expeditionId, placeId){
         method: 'POST',
         body: files,
     }).then((response) => {
-        console.log(response)
     })
 }
 

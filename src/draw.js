@@ -113,8 +113,6 @@ async function addNewExpedition(expeditionId, markerCoordinates, lineCoordinates
         }
     }
 
-    console.log(imgInputs)
-
     await sendExpedition(expeditionId,expeditionName,expeditionLeader,expeditionStart,expeditionEnd);
 
     if(markerCoordinates.length > 0){
@@ -123,6 +121,7 @@ async function addNewExpedition(expeditionId, markerCoordinates, lineCoordinates
             if (imgInputs[i].files.length > 0){
                 hasImages = true;
             }
+            console.log(hasImages)
             await sendPlace(lastPlaceId+i+1,markerCoordinates[i].name, markerCoordinates[i].lat, markerCoordinates[i].lng)
             await sendMarker(expeditionId, lastPlaceId+i+1, lastMarkerSequence+i+1, markerCoordinates[i].name,markerCoordinates[i].date,markerCoordinates[i].info,markerCoordinates[i].src, hasImages)
             if(hasImages){
@@ -194,7 +193,6 @@ function initNewMarker(layer, seq){
     layer.src = "";
     layer.img = "";
     layer.addEventListener('click', function (){
-        console.log(layer)
         currentLayer = layer;
         setPlaceFormLatLng(layer._latlng);
         setPlaceFormName(layer.name);

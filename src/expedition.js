@@ -33,10 +33,6 @@ async function loadExpeditionMarkers(exp_id, map) {
             images = JSON.parse(images)
         }
         marker.on('click', function(){
-            const infoExpName = document.querySelector(".info-container-exp-name");
-            const infoExpStart = document.querySelector(".info-container-exp-start");
-            const infoExpEnd = document.querySelector(".info-container-exp-end");
-            const infoExpLeader = document.querySelector(".info-container-exp-leader");
             const infoPlaceName = document.querySelector(".info-container-place-name");
             const infoPlaceSeq = document.querySelector(".info-container-place-seq");
             const infoPlaceDate = document.querySelector(".info-container-place-date");
@@ -44,14 +40,9 @@ async function loadExpeditionMarkers(exp_id, map) {
             const infoPlaceSrc = document.querySelector(".info-container-place-src");
             const infoPlaceImages = document.querySelector(".info-container-place-images");
 
-            let startDate = new Date(expeditionMarkers[i].startdate).toLocaleDateString('de-DE')
-            let endDate = new Date(expeditionMarkers[i].enddate).toLocaleDateString('de-DE')
             let placeDate = new Date(expeditionMarkers[i].date).toLocaleDateString('de-DE')
 
-            infoExpName.innerHTML = expeditionMarkers[i].exp_name;
-            infoExpStart.innerHTML = "Startdatum: " + startDate;
-            infoExpEnd.innerHTML = "Enddatum: " + endDate;
-            infoExpLeader.innerHTML = "Expeditionsleiter: " + expeditionMarkers[i].leader;
+            showExpeditionInfo(expeditionMarkers[i])
 
             infoPlaceName.innerHTML = expeditionMarkers[i].name
             infoPlaceSeq.innerHTML = expeditionMarkers[i].sequence + ". Station von <i>" + expeditionMarkers[i].exp_name + "</i>"
@@ -190,3 +181,18 @@ async function loadExpedition(map) {
 
     copyAllLayers(map, expeditionCoordinates, expeditionRouteCoordinates)
 }*/
+
+function showExpeditionInfo(marker){
+    const infoExpName = document.querySelector(".info-container-exp-name");
+    const infoExpStart = document.querySelector(".info-container-exp-start");
+    const infoExpEnd = document.querySelector(".info-container-exp-end");
+    const infoExpLeader = document.querySelector(".info-container-exp-leader");
+
+    let startDate = new Date(marker.startdate).toLocaleDateString('de-DE')
+    let endDate = new Date(marker.enddate).toLocaleDateString('de-DE')
+
+    infoExpName.innerHTML = marker.exp_name;
+    infoExpStart.innerHTML = "Startdatum: " + startDate;
+    infoExpEnd.innerHTML = "Enddatum: " + endDate;
+    infoExpLeader.innerHTML = "Expeditionsleiter: " + marker.leader;
+}
