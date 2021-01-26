@@ -46,6 +46,10 @@ export async function getLastPlaceId() {
     return 0;
 }
 
+export async function getImages(exp, place){
+    return await makeRequest("GET", "http://mapping-expeditions.de/api/loadImages.php?e=" + exp + "&p=" + place);
+}
+
 export async function sendExpedition(exp_id, name, leader, startdate, enddate){
     let obj = {
         "exp_id": exp_id,
@@ -54,15 +58,19 @@ export async function sendExpedition(exp_id, name, leader, startdate, enddate){
         "startdate": startdate,
         "enddate": enddate
     }
-    console.log(obj)
     await sendRequest("http://mapping-expeditions.de/api/saveExpedition.php", obj)
 }
 
-export async function sendMarker(exp_id, placeid, seq){
+export async function sendMarker(exp_id, placeid, seq, name, date, info, src, hasImages){
     let obj = {
         "exp_id": exp_id,
         "placeid": placeid,
         "sequence": seq,
+        "name": name,
+        "date": date,
+        "info": info,
+        "src": src,
+        "hasImages": hasImages
     }
     await sendRequest("http://mapping-expeditions.de/api/saveMarker.php", obj)
 
@@ -79,6 +87,24 @@ export async function sendPlace(placeid, name, lat, lng){
 
 }
 
+export async function saveImages(files, expeditionId, placeId){
+    fetch("http://mapping-expeditions.de/api/test.php?e="+ expeditionId + "&p=" + placeId, {
+        method: 'POST',
+        body: files,
+    }).then((response) => {
+        console.log(response)
+    })
+}
+
+export async function sendImage(exp_id, place_id, seq, fileName) {
+    let obj = {
+        "exp_id": exp_id,
+        "place_id": place_id,
+        "seq": seq,
+        "fileName": fileName
+    }
+    await sendRequest("http://mapping-expeditions.de/api/sendImage.php", obj)
+}
 
 export async function sendRoute(exp_id, seq, lat, lng){
     let obj = {

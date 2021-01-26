@@ -42,3 +42,7 @@ export function concatArray(array) {
     concatArray = concatArray.concat(array[0], array[1])
     return concatArray;
 }
+
+export function buildImagePath(exp, seq, file) {
+    return "http://mapping-expeditions.de/images/" + exp + "/" + seq + "/" + file
+}

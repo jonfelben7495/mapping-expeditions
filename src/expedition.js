@@ -1,6 +1,6 @@
 import L from "leaflet";
-import {getExpeditionMarkers, getExpeditionRoute} from "./apiCalls";
-import {calculateLatForDateline, compareBySequence, concatArray, copyPath} from "./utilities";
+import {getExpeditionMarkers, getExpeditionRoute, getImages} from "./apiCalls";
+import {buildImagePath, calculateLatForDateline, compareBySequence, concatArray, copyPath} from "./utilities";
 import marker from 'leaflet/dist/images/marker-icon.png'
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
 let myIcon = L.icon({
@@ -27,10 +27,47 @@ async function loadExpeditionMarkers(exp_id, map) {
     let markers = [];
     for (let i = 0; i < expeditionMarkers.length; i++) {
         let marker = L.marker([expeditionMarkers[i].latitude, expeditionMarkers[i].longitude], {icon: myIcon}).addTo(map)
-        marker.bindPopup("<b>" + expeditionMarkers[i].name + "<br/> " +
-            expeditionMarkers[i].sequence + ". Station von <i>" + expeditionMarkers[i].exp_name + "</i></b>"+ "<br/>" +
-            expeditionMarkers[i].place_info + "<br/>" + "<a style=\'text-align: right; display:block;\' href=\'" + expeditionMarkers[i].external_info_src + "'><i> Mehr Infos zur Expedition...</i></a>"
-        )
+        let images = [];
+        if(expeditionMarkers[i].hasImages === "1"){
+            images = await getImages(exp_id, expeditionMarkers[i].placeid);
+            images = JSON.parse(images)
+        }
+        marker.on('click', function(){
+            const infoExpName = document.querySelector(".info-container-exp-name");
+            const infoExpStart = document.querySelector(".info-container-exp-start");
+            const infoExpEnd = document.querySelector(".info-container-exp-end");
+            const infoExpLeader = document.querySelector(".info-container-exp-leader");
+            const infoPlaceName = document.querySelector(".info-container-place-name");
+            const infoPlaceSeq = document.querySelector(".info-container-place-seq");
+            const infoPlaceDate = document.querySelector(".info-container-place-date");
+            const infoPlaceText = document.querySelector(".info-container-place-text");
+            const infoPlaceSrc = document.querySelector(".info-container-place-src");
+            const infoPlaceImages = document.querySelector(".info-container-place-images");
+
+            let startDate = new Date(expeditionMarkers[i].startdate).toLocaleDateString('de-DE')
+            let endDate = new Date(expeditionMarkers[i].enddate).toLocaleDateString('de-DE')
+            let placeDate = new Date(expeditionMarkers[i].date).toLocaleDateString('de-DE')
+
+            infoExpName.innerHTML = expeditionMarkers[i].exp_name;
+            infoExpStart.innerHTML = "Startdatum: " + startDate;
+            infoExpEnd.innerHTML = "Enddatum: " + endDate;
+            infoExpLeader.innerHTML = "Expeditionsleiter: " + expeditionMarkers[i].leader;
+
+            infoPlaceName.innerHTML = expeditionMarkers[i].name
+            infoPlaceSeq.innerHTML = expeditionMarkers[i].sequence + ". Station von <i>" + expeditionMarkers[i].exp_name + "</i>"
+            infoPlaceDate.innerHTML = "Datum: " + placeDate;
+            infoPlaceText.innerHTML = expeditionMarkers[i].place_info;
+            infoPlaceSrc.innerHTML = "Quelle: " + expeditionMarkers[i].place_info_src;
+
+            infoPlaceImages.innerHTML = "";
+            if(images.length > 0){
+                for (let j = 0; j < images.length; j++){
+                    let image = document.createElement('img');
+                    image.src = buildImagePath(exp_id, expeditionMarkers[i].sequence, images[j].file_name)
+                    infoPlaceImages.appendChild(image)
+                }
+            }
+        })
         markers.push(marker)
     }
 
@@ -51,7 +88,6 @@ export async function loadExpeditionRoute(exp_id, map) {
             let long2 = parseFloat(expeditionRoute[i+1].lng);
             let diff = long1 - long2;
             if (Math.abs(diff) > 180) {
-                console.log(diff)
                 let latitude = calculateLatForDateline(expeditionRoute[i], expeditionRoute[i+1])
                 expeditionRouteCoordinates.push([latitude, -180])
                 expeditionRouteCoordinates.push([latitude, 180])
@@ -74,9 +110,9 @@ export async function loadExpeditionRoute(exp_id, map) {
 function copyExpeditionMarkers(markers, map){
     for (let i = 0; i < markers.length; i++) {
         let markerPlus360 = L.marker([markers[i]._latlng.lat,markers[i]._latlng.lng+360], {icon: myIcon}).addTo(map)
-        markerPlus360.bindPopup(markers[i]._popup._content)
+        // markerPlus360.bindPopup(markers[i]._popup._content)
         let markerMinus360 = L.marker([markers[i]._latlng.lat,markers[i]._latlng.lng-360], {icon: myIcon}).addTo(map)
-        markerMinus360.bindPopup(markers[i]._popup._content)
+        // markerMinus360.bindPopup(markers[i]._popup._content)
     }
 }
 
@@ -99,7 +135,6 @@ function copyExpeditionRoute(route, map) {
         for (let i=0; i < expeditionCoordinates.length; i++){
             coordinatesPlus360 = [];
             coordinatesMinus360 = [];
-            console.log(expeditionCoordinates[i])
             for(let j=0; j<expeditionCoordinates[i].length; j++) {
                 let plus360 = JSON.parse(JSON.stringify(expeditionCoordinates[i][j]));
                 plus360 = copyPath(plus360, 360)

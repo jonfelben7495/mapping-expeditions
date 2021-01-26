@@ -2,7 +2,6 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $q = intval($_GET['q']);
          $data = json_decode(file_get_contents('php://input'), true);
-         echo $data["exp_id"];
 
              $dbServerName = "db5001272959.hosting-data.io";
              $dbUsername = "dbu1070012";
@@ -17,7 +16,7 @@
 
              echo "Connected successfully";
 
-             $sql = "INSERT INTO placesinexpeditions (expeditionid, placeid, sequence, name, date, place_info, place_info_src, hasImages) VALUES (" . $data["exp_id"] . "," . $data["placeid"] . "," . $data["sequence"] . ",'" . $data["name"] . "','" . $data["date"] . "','" . $data["info"] . "','" . $data["src"] . "'," . $data["hasImages"] . ")";
+             $sql = "INSERT INTO images (exp_id, place_id, sequence, file_name) VALUES (" . $data["exp_id"] . "," . $data["place_id"] . "," . $data["seq"] . ",'" . $data["fileName"] . "')";
              if (mysqli_query($conn, $sql)) {
                    echo "New record created successfully";
              } else {

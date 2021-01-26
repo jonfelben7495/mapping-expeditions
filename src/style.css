@@ -1,13 +1,44 @@
 #map {
     height: 70vh;
     min-height: 600px;
-    width: 50%
+    width: 100%
 }
 
 #application {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 60% 40%;
+    max-width: 98%;
+}
+
+#map, #interface {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+#info-container {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+}
+
+#forms {
     display: flex;
 }
 
 .hide {
     display: none;
+}
+
+.newExpedition-form, .newPlace-form {
+    display: none;
+}
+
+.info-container-place-images {
+}
+
+.info-container-place-images img {
+    max-width: 30%;
+    height: auto;
+    vertical-align: top;
 }
