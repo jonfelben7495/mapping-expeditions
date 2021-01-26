@@ -88,7 +88,7 @@ export async function sendPlace(placeid, name, lat, lng){
 }
 
 export async function saveImages(files, expeditionId, placeId){
-    fetch("http://mapping-expeditions.de/api/test.php?e="+ expeditionId + "&p=" + placeId, {
+    fetch("http://mapping-expeditions.de/api/saveImages.php?e="+ expeditionId + "&p=" + placeId, {
         method: 'POST',
         body: files,
     }).then((response) => {

@@ -2,18 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83252615-6256-4db0-8799-00f050b7f5c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/api/loadImages.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/sendImage.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/test.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/saveMarker.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/saveMarker.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/test.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/saveImages.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/apiCalls.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/apiCalls.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/draw.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/expedition.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/expedition.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interface.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interface.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utilities.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +79,7 @@
       <workItem from="1611226818052" duration="15088000" />
       <workItem from="1611563963627" duration="20687000" />
       <workItem from="1611649821888" duration="9273000" />
+      <workItem from="1611660675931" duration="85000" />
     </task>
     <task id="LOCAL-00001" summary="marker">
       <created>1608560339927</created>
