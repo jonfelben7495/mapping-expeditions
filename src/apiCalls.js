@@ -46,6 +46,10 @@ export async function getLastPlaceId() {
     return 0;
 }
 
+export async function getImages(exp, place){
+    return await makeRequest("GET", "http://mapping-expeditions.de/api/loadImages.php?e=" + exp + "&p=" + place);
+}
+
 export async function sendExpedition(exp_id, name, leader, startdate, enddate){
     let obj = {
         "exp_id": exp_id,
@@ -54,15 +58,20 @@ export async function sendExpedition(exp_id, name, leader, startdate, enddate){
         "startdate": startdate,
         "enddate": enddate
     }
-    console.log(obj)
     await sendRequest("http://mapping-expeditions.de/api/saveExpedition.php", obj)
 }
 
-export async function sendMarker(exp_id, placeid, seq){
+export async function sendMarker(exp_id, placeid, seq, name, date, info, src, hasImages){
+    hasImages = hasImages ? 1 : 0;
     let obj = {
         "exp_id": exp_id,
         "placeid": placeid,
         "sequence": seq,
+        "name": name,
+        "date": date,
+        "info": info,
+        "src": src,
+        "hasImages": hasImages
     }
     await sendRequest("http://mapping-expeditions.de/api/saveMarker.php", obj)
 
@@ -79,16 +88,75 @@ export async function sendPlace(placeid, name, lat, lng){
 
 }
 
+export async function saveImages(files, expeditionId, placeId){
+    fetch("http://mapping-expeditions.de/api/saveImages.php?e="+ expeditionId + "&p=" + placeId, {
+        method: 'POST',
+        body: files,
+    }).then((response) => {
+    })
+}
 
-export async function sendRoute(exp_id, seq, lat, lng){
+export async function sendImage(exp_id, place_id, seq, fileName, description, creator, src) {
     let obj = {
         "exp_id": exp_id,
-        "sequence": seq,
-        "lat": lat,
-        "lng": lng
+        "place_id": place_id,
+        "seq": seq,
+        "fileName": fileName,
+        "description": description,
+        "creator": creator,
+        "src": src
+    }
+    await sendRequest("http://mapping-expeditions.de/api/sendImage.php", obj)
+}
+
+export async function sendRoute(exp_id, array){
+    let obj = {
+        "exp_id": exp_id,
+        "array": array
     }
     await sendRequest("http://mapping-expeditions.de/api/saveRoute.php", obj)
 
+}
+
+export async function updateMarkerData(expId, placeId, name, sequence, date, info, src, hasImages) {
+    let obj = {
+        "expId": expId,
+        "placeId": placeId,
+        "name": name,
+        "sequence": sequence,
+        "date": date,
+        "info": info,
+        "src": src,
+        "hasImages": hasImages
+    }
+    await sendRequest("http://mapping-expeditions.de/api/updateMarkerData.php", obj)
+}
+
+export async function updatePlace(placeId, name, lat, lng) {
+    let obj = {
+        "placeId": placeId,
+        "name": name,
+        "lat": lat,
+        "lng": lng
+    }
+    await sendRequest("http://mapping-expeditions.de/api/updatePlace.php", obj)
+}
+
+export async function deleteRoute(expId) {
+    let obj = {
+        "expId": expId
+    }
+    await sendRequest("http://mapping-expeditions.de/api/deleteRoute.php", obj)
+}
+
+export async function updateRoute(expId, seq, lat, lng) {
+    let obj = {
+        "expId": expId,
+        "seq": seq,
+        "lat": lat,
+        "lng": lng
+    }
+    await sendRequest("http://mapping-expeditions.de/api/updateRoute.php", obj)
 }
 
 function makeRequest(method, url) {

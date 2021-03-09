@@ -12,7 +12,7 @@
 
              echo "Connected successfully";
 
-             $sql = "INSERT INTO places (placeid, place_name, latitude, longitude) VALUES (" . $data["placeid"] .",'" . $data["name"] . "'," . $data["lat"] . "," . $data["lng"] . ")";
+             $sql = "UPDATE places SET place_name = '" . $data["name"] . "', latitude = '" . $data["lat"] . "', longitude = '" . $data["lng"] . "' WHERE placeid = '" . $data["placeId"] . "';";
              if (mysqli_query($conn, $sql)) {
                    echo "New record created successfully";
              } else {
