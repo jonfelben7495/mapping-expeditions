@@ -2,41 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83252615-6256-4db0-8799-00f050b7f5c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/api/database.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/deleteRoute.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/updateMarkerData.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/updatePlace.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/17a589.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/229954.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/2e86c1.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/34495e.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/7d3c98.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/a93226.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/d35400.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/markers/f1c40f.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/getLastExpedition.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/getLastExpedition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/getLastMarker.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/getLastMarker.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/getLastPlaceId.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/getLastPlaceId.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/getLastSequence.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/getLastSequence.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/loadExpedition.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/loadExpedition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/loadImages.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/loadImages.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/loadRoute.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/loadRoute.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/saveExpedition.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/saveExpedition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/saveMarker.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/saveMarker.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/savePlace.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/savePlace.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/saveRoute.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/saveRoute.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/sendImage.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/sendImage.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/apiCalls.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/apiCalls.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/draw.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/expedition.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/expedition.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/interface.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interface.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utilities.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +104,7 @@
       <workItem from="1614675037325" duration="10889000" />
       <workItem from="1614850006113" duration="3444000" />
       <workItem from="1615200525086" duration="14941000" />
-      <workItem from="1615281999529" duration="6131000" />
+      <workItem from="1615281999529" duration="16943000" />
     </task>
     <task id="LOCAL-00001" summary="marker">
       <created>1608560339927</created>

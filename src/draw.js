@@ -14,7 +14,7 @@ import {
     sendImage,
     sendMarker,
     sendPlace,
-    sendRoute, updateMarkerData, updatePlace, updateRoute
+    sendRoute, updateMarkerData, updatePlace
 } from "./apiCalls";
 import {loadExpedition, loadExpeditionRoute} from "./expedition";
 import {
@@ -28,13 +28,18 @@ import {
     showPlaceForm, showSaveButton
 } from "./interface";
 import {removeMultipleLayers} from "./utilities";
-import {drawAllExpeditions, updateLegend} from "./index";
+import {updateLegend} from "./index";
 
 let currentLayer = "";
 let drawControl;
 let drawnItems;
 
-export function initDrawControl(map, arrayOfElements, markerIcon){
+/**
+ * Initiates the draw control for drawing on the map.
+ * @param {Object} map - Leaflet map object
+ * @param {array} arrayOfElements - Array of already existing elements to add to the drawn items array
+ */
+export function initDrawControl(map, arrayOfElements){
     drawnItems = new L.FeatureGroup();
     if(arrayOfElements){
         setExpeditionInputs(arrayOfElements[0].expName, arrayOfElements[0].expLeader, arrayOfElements[0].startDate, arrayOfElements[0].endDate)
@@ -60,10 +65,20 @@ export function initDrawControl(map, arrayOfElements, markerIcon){
     return drawnItems;
 }
 
+/**
+ * Removes the draw control for drawing on the map.
+ * @param {Object} map - Leaflet map object
+ */
 export function removeDrawControl(map){
     map.removeControl(drawControl)
 }
 
+/**
+ * Initiates the draw control for drawing on the map and adds event listeners for different drawing events.
+ * @param {Object} map - Leaflet map object
+ * @param {array} arrayOfElements - Array of already existing elements to add to the drawn items array
+ * @param {boolean} isNewExpedition - Defines whether a new expedition is drawn or an existing expedition is edited.
+ */
 export function addDrawEventListener(map, isNewExpedition, arrayOfElements){
     drawnItems = initDrawControl(map, arrayOfElements)
     let seq = 0;
@@ -148,11 +163,17 @@ export function addDrawEventListener(map, isNewExpedition, arrayOfElements){
     })
 }
 
+/**
+ * Fired after saving a new expedition. Sends expedition data to the database and prepares map for further use.
+ * @param {Object} map - Leaflet map object
+ * @param {array} markerCoordinates - Drawn markers for the expedition
+ * @param {array} lineCoordinates - Coordinates of drawn polyline aka route of the expedition
+ * @param {Array} layers - All newly drawn layers
+ */
 async function addNewExpedition(markerCoordinates, lineCoordinates, map, layers){
     let expeditionId = await getLastExpeditionId() + 1;
     let lastPlaceId = await getLastPlaceId();
     let lastMarkerSequence = 0;
-    let lastRouteSequence = 0;
     let expeditionName = document.getElementById("newExpedition-name").value;
     let expeditionLeader = document.getElementById("newExpedition-leader").value;
     let expeditionStart = document.getElementById("newExpedition-startDate").value;
@@ -202,6 +223,14 @@ async function addNewExpedition(markerCoordinates, lineCoordinates, map, layers)
     await loadExpedition(expeditionId, map)
 }
 
+/**
+ * Fired after saving an edited expedition. Sends expedition data to the database and prepares map for further use.
+ * @param {string} expeditionId - ID of the expedition
+ * @param {Object} map - Leaflet map object
+ * @param {array} markerCoordinates - Drawn markers for the expedition
+ * @param {array} lineCoordinates - Coordinates of drawn polyline aka route of the expedition
+ * @param {Array} layers - All newly drawn layers
+ */
 async function addToExistingExpedition(expeditionId, markerCoordinates, lineCoordinates, map, layers){
     let imgInputs = getAllImgInputs();
 
@@ -263,6 +292,12 @@ async function addToExistingExpedition(expeditionId, markerCoordinates, lineCoor
     await loadExpedition(expeditionId, map)
 }
 
+/**
+ * Sorts an array of layers into two array depending on their type.
+ * @param {array} markers - Array for layers of type marker
+ * @param {array} lines - Array for layers of type polyline
+ * @param {Array} layers - All newly drawn layers
+ */
 function sortLayers(markers, lines, layers){
     for (let i = 0; i < Object.keys(layers).length; i++) {
         if (Object.values(layers)[i].type === "marker") {
@@ -273,6 +308,11 @@ function sortLayers(markers, lines, layers){
     }
 }
 
+/**
+ * Fired after a new marker is set or drawn. Prepares input fields and meta data for the marker for further use.
+ * @param {Object} layer - The Leaflet layer of the added marker.
+ * @param {string} seq - Sequence number of the marker inside the expedition.
+ */
 function initNewMarker(layer, seq){
     currentLayer = layer;
     showPlaceForm();
@@ -309,6 +349,11 @@ function initNewMarker(layer, seq){
     return seq;
 }
 
+/**
+ * Fired when markers of an existing expedition are being prepared for editing. Prepares input fields and meta data for the marker for further use.
+ * @param {Object} layer - The Leaflet layer of the marker.
+ * @param {string} seq - Sequence number of the marker inside the expedition.
+ */
 function initExistingMarker(layer, seq){
     setPlaceFormLatLng(layer._latlng)
     addNameInputEventListener();
@@ -339,6 +384,9 @@ function initExistingMarker(layer, seq){
     return seq;
 }
 
+/**
+ * Fired after changing the place name input. Saves the input to the current layer object for later use.
+ */
 export function setLayerName(){
     const nameInput = document.getElementById("newPlace-name");
     currentLayer.name = nameInput.value;
@@ -346,6 +394,9 @@ export function setLayerName(){
     showSaveButton()
 }
 
+/**
+ * Fired after changing the place date input. Saves the input to the current layer object for later use.
+ */
 export function setLayerDate(){
     const dateInput = document.getElementById("newPlace-date");
     currentLayer.date = dateInput.value;
@@ -353,6 +404,9 @@ export function setLayerDate(){
     showSaveButton()
 }
 
+/**
+ * Fired after changing the place info input. Saves the input to the current layer object for later use.
+ */
 export function setLayerInfo(){
     const infoInput = document.getElementById("newPlace-info");
     currentLayer.info = infoInput.value;
@@ -360,6 +414,9 @@ export function setLayerInfo(){
     showSaveButton()
 }
 
+/**
+ * Fired after changing the place src input. Saves the input to the current layer object for later use.
+ */
 export function setLayerSrc(){
     const srcInput = document.getElementById("newPlace-src");
     currentLayer.src = srcInput.value;
@@ -367,41 +424,54 @@ export function setLayerSrc(){
     showSaveButton()
 }
 
-export function setLayerImg(){
-    const imgInput = document.getElementById("newPlace-img");
-    window.img = imgInput;
-}
-
+/**
+ * Removes former event listener and adds new event listener on the place name input.
+ */
 export function addNameInputEventListener(){
     const nameInput = document.getElementById("newPlace-name");
     nameInput.removeEventListener('keyup', setLayerName)
     nameInput.addEventListener('keyup', setLayerName)
 }
 
+/**
+ * Removes former event listener and adds new event listener on the place date input.
+ */
 export function addDateInputEventListener(){
     const dateInput = document.getElementById("newPlace-date");
     dateInput.removeEventListener('change', setLayerDate)
     dateInput.addEventListener('change', setLayerDate)
 }
 
+/**
+ * Removes former event listener and adds new event listener on the place info input.
+ */
 export function addInfoInputEventListener(){
     const infoInput = document.getElementById("newPlace-info");
     infoInput.removeEventListener('keyup', setLayerInfo)
     infoInput.addEventListener('keyup', setLayerInfo)
 }
 
+/**
+ * Removes former event listener and adds new event listener on the place src input.
+ */
 export function addSrcInputEventListener(){
     const srcInput = document.getElementById("newPlace-src");
     srcInput.removeEventListener('keyup', setLayerSrc)
     srcInput.addEventListener('keyup', setLayerSrc)
 }
 
+/**
+ * Removes former event listener and adds new event listener on the place img input.
+ */
 export function addImgInputEventListener(){
     const imgInput = document.getElementById("newPlace-img-container");
     imgInput.removeEventListener('change', showImgForm)
     imgInput.addEventListener('change', showImgForm)
 }
 
+/**
+ * Creates a new img input and appends it to the container that contains the img inputs for all markers.
+ */
 export function createNewImgInput(){
     const imgInputContainer = document.getElementById("newPlace-img-container");
     hideAllImgInputs()
@@ -420,6 +490,10 @@ export function createNewImgInput(){
     imgInputContainer.appendChild(newInput)
 }
 
+/**
+ * Creates meta data inputs for all images to be uploaded.
+ * @param {array} files - Array of all uploaded image files.
+ */
 function createImgMetaDataInputs(files){
     const imgFormContainer = document.getElementById("images-forms");
     clearImgFormContainer()
@@ -429,11 +503,18 @@ function createImgMetaDataInputs(files){
 
 }
 
+/**
+ * Clears the form container that contains all image data for the current layer.
+ */
 function clearImgFormContainer(){
     const imgFormContainer = document.getElementById("images-forms");
     imgFormContainer.innerHTML = "";
 }
 
+/**
+ * Adds meta data attributes for all uploaded image files to the current layer.
+ * @param {array} files - Array of all uploaded image files.
+ */
 function createMetaDataForLayer(files){
     for (let i = 0; i < files.length; i++) {
         let metaDataObj = {};
@@ -445,10 +526,19 @@ function createMetaDataForLayer(files){
     }
 }
 
+/**
+ * Clears the meta data attributes of the current layer.
+ */
 function clearImgMetaDataForLayer(){
     currentLayer.imgMetaData = [];
 }
 
+/**
+ * Creates and initiates meta data inputs for a single image.
+ * @param {Object} imgFormContainer - DOM object to which the meta data container will be appended
+ * @param {array} files - Array of all uploaded image files.
+ * @param {int} i -  running variable
+ */
 function createMetaDataContainer(imgFormContainer, files, i){
     const submitButton = document.getElementById('button-submit');
     const metaDataContainer = document.createElement('div');
@@ -533,6 +623,10 @@ function createMetaDataContainer(imgFormContainer, files, i){
     imgFormContainer.appendChild(metaDataContainer)
 }
 
+/**
+ * Shows the img input of a specific marker.
+ * @param {int} seq - Sequence number of the marker
+ */
 export function showImgInput(seq){
     let currentInputs = getAllImgInputs()
     let imgInput = currentInputs[seq-1];
@@ -540,6 +634,9 @@ export function showImgInput(seq){
     imgInput.classList.add("inlineBlock")
 }
 
+/**
+ * Hides all img inputs.
+ */
 function hideAllImgInputs(){
     let currentInputs = getAllImgInputs()
     if(currentInputs.length > 0){
@@ -550,16 +647,28 @@ function hideAllImgInputs(){
     }
 }
 
+/**
+ * Returns an array of all img inputs.
+ */
 function getAllImgInputs(){
     const imgInputContainer = document.getElementById("newPlace-img-container");
     return imgInputContainer.querySelectorAll("input");
 }
 
+/**
+ * Returns a single img input.
+ * @param {int} seq - Sequence number of the marker
+ */
 function getImgInput(seq){
     let currentInputs = getAllImgInputs()
     return currentInputs[seq - 1]
 }
 
+/**
+ * Set the img meta data form to represent the images and data of a specific marker.
+ * @param {Array} metaData - Img meta data of the marker
+ * @param {int} seq - Sequence number of the marker
+ */
 function setImgMetaDataForm(metaData, seq){
     if(metaData.length === 0){
         clearImgFormContainer()
@@ -572,6 +681,11 @@ function setImgMetaDataForm(metaData, seq){
     }
 }
 
+/**
+ * Set the img meta data input values to the img meta data of a specific marker.
+ * @param {Array} metaData - Img meta data of the marker
+ * @param {int} seq - Sequence number of the marker
+ */
 function setImgMetaDataInputs(metaData, seq){
     const imgDescription = document.getElementById("img-description-" + seq);
     imgDescription.value = metaData.description;
@@ -583,10 +697,21 @@ function setImgMetaDataInputs(metaData, seq){
     imgSrc.value = metaData.src;
 }
 
+/**
+ * Removes all drawn items from the map
+ * @param {Object} map - Leaflet map object
+ */
 export function deleteDrawnItems(map){
     map.removeLayer(drawnItems);
 }
 
+/**
+ * Set the expedition input values to fit the chosen expedition.
+ * @param {string} name - Name of the expedition
+ * @param {string} leader - Leader of the expedition
+ * @param {string} startdate - Start date of the expedition
+ * @param {string} enddate - End date of the expedition
+ */
 function setExpeditionInputs(name, leader, startdate, enddate){
     let nameInput = document.getElementById("newExpedition-name");
     nameInput.value = name;
@@ -599,4 +724,17 @@ function setExpeditionInputs(name, leader, startdate, enddate){
 
     let endDateInput = document.getElementById("newExpedition-endDate");
     endDateInput.value = enddate;
+}
+
+/**
+ * Adds a number of expeditions to the map.
+ * @param {int} lastExpeditionId - ID of the last expedition to be added
+ * @param {Object} map - Leaflet map object
+ */
+export async function drawAllExpeditions(lastExpeditionId, map){
+    let addedExpeditions;
+    for (let i =1; i <= lastExpeditionId; i++) {
+        addedExpeditions = await loadExpedition(i, map)
+    }
+    return addedExpeditions
 }

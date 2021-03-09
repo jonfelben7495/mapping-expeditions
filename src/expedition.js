@@ -11,23 +11,13 @@ import {
 } from "./utilities";
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
 
-function getMarker(color){
-    return L.icon({
-        iconUrl: colorToFileName(color),
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: Shadow,
-        shadowSize: [41, 41]
-    })
-}
-
-function colorToFileName(color){
-    return "./markers/" + color.replace("#", "") + ".svg"
-}
-
 let loadedExpeditions = []
 
+/**
+ * Loads and adds an expedition to the map.
+ * @param {string} exp_id - ID of the expedition
+ * @param {Object} map - Leaflet map object
+ */
 export async function loadExpedition(exp_id, map){
     let lineColor = getColorForExpedition(exp_id-1)
     let expeditionMarkers = await loadExpeditionMarkers(exp_id, map, lineColor);
@@ -39,6 +29,12 @@ export async function loadExpedition(exp_id, map){
     return loadedExpeditions
 }
 
+/**
+ * Loads and adds all markers of an expedition to the map.
+ * @param {string} exp_id - ID of the expedition
+ * @param {Object} map - Leaflet map object
+ * @param {string} color - the color of the markers based on the expedition id
+ */
 async function loadExpeditionMarkers(exp_id, map, color) {
     let expeditionMarkers = await getExpeditionMarkers(exp_id)
     expeditionMarkers = JSON.parse(expeditionMarkers);
@@ -100,6 +96,12 @@ async function loadExpeditionMarkers(exp_id, map, color) {
     return markers;
 }
 
+/**
+ * Loads and adds the route of an expedition to the map.
+ * @param {string} exp_id - ID of the expedition
+ * @param {Object} map - Leaflet map object
+ * @param {string} lineColor - the color of the polyline based on the expedition id
+ */
 export async function loadExpeditionRoute(exp_id, map, lineColor) {
     let expeditionRoute = await getExpeditionRoute(exp_id);
     expeditionRoute = JSON.parse(expeditionRoute);
@@ -145,6 +147,12 @@ export async function loadExpeditionRoute(exp_id, map, lineColor) {
 
 }
 
+/**
+ * Copies all markers of an expedition with an added and deducted longitude. Serves for higher zoom levels where the map can be seen multiple times.
+ * @param {array} markers - Array of all markers of the expediton
+ * @param {Object} map - Leaflet map object
+ * @param {string} color - the color of the markers based on the expedition id
+ */
 function copyExpeditionMarkers(markers, map, color){
     for (let i = 0; i < markers.length; i++) {
         L.marker([markers[i]._latlng.lat,markers[i]._latlng.lng+360], {icon: getMarker(color)}).addTo(map)
@@ -152,6 +160,12 @@ function copyExpeditionMarkers(markers, map, color){
     }
 }
 
+/**
+ * Copies the route of an expedition with an added and deducted longitude. Serves for higher zoom levels where the map can be seen multiple times.
+ * @param {Object} route - The route of the expedition including all coordinates
+ * @param {Object} map - Leaflet map object
+ * @param {string} lineColor - the color of the route based on the expedition id
+ */
 function copyExpeditionRoute(route, map, lineColor) {
     if(route === null){
         return;
@@ -210,6 +224,10 @@ function copyExpeditionRoute(route, map, lineColor) {
     }
 }
 
+/**
+ * Renders the information about an expedition into the info container.
+ * @param {Object} marker - A marker of the expedition
+ */
 function showExpeditionInfo(marker){
     const infoContainer = document.querySelector("#info-container")
     const infoContainerPlace = document.querySelector("#info-container-place")
@@ -227,4 +245,27 @@ function showExpeditionInfo(marker){
     infoExpStart.innerHTML = "Start date: " + startDate;
     infoExpEnd.innerHTML = "End date: " + endDate;
     infoExpLeader.innerHTML = "Expedition leader: " + marker.leader;
+}
+
+/**
+ * Returns a specifically colored marker icon.
+ * @param {string} color - HTML color code for the icon
+ */
+function getMarker(color){
+    return L.icon({
+        iconUrl: colorToFileName(color),
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: Shadow,
+        shadowSize: [41, 41]
+    })
+}
+
+/**
+ * Returns the path for an icon svg based on a color.
+ * @param {string} color - HTML color code for the icon
+ */
+function colorToFileName(color){
+    return "./markers/" + color.replace("#", "") + ".svg"
 }

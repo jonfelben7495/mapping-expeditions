@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css'
 import marker from 'leaflet/dist/images/marker-icon.png'
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
-import {addDrawEventListener, initDrawControl} from "./draw";
+import {addDrawEventListener, drawAllExpeditions, initDrawControl} from "./draw";
 import {loadExpedition} from "./expedition";
 import {
     createAddToExpeditionButton, createCancelButton, createExplanationText,
@@ -22,6 +22,11 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
+/**
+ * Initiates the apps and creates all features.
+ * @param {string} mapid - ID of the map container
+ * @param {string} appid - ID of the whole application container
+ */
 async function initApp(mapid, appid){
     createApp(appid);
     createMapObject(mapid, appid);
@@ -35,12 +40,20 @@ async function initApp(mapid, appid){
     createLegend(mapObject, addedExpeditions)
 }
 
+/**
+ * Creates a container for the whole app.
+ * @param {string} id - ID of the whole application container
+ */
 function createApp(id){
     const app = document.createElement('div');
     app.id = id;
     document.body.appendChild(app);
 }
 
+/**
+ * Creates a container for the info container, in which information regarding expeditions and markers can be displayed.
+ * @param {string} appid - ID of the whole application container
+ */
 function createInfoContainer(appid){
     const container = document.createElement('div');
     container.id = "info-container";
@@ -108,6 +121,11 @@ function createInfoContainer(appid){
     app.appendChild(container);
 }
 
+/**
+ * Creates a map object and appends it to the app.
+ * @param {string} mapid - ID of the map container
+ * @param {string} appid - ID of the whole app container
+ */
 function createMapObject(mapid, appid){
     const mapObject = document.createElement('div');
     mapObject.id = mapid;
@@ -116,6 +134,13 @@ function createMapObject(mapid, appid){
     app.appendChild(mapObject);
 }
 
+/**
+ * Creates the user interface, which can be used to add or edit expeditions.
+ * @param {Object} map - the leaflet map object
+ * @param {string} appid - ID of the whole app container
+ * @param {string} interfaceid - ID of the interface container
+ * @param {array} expeditions - Array of all loaded expeditions
+ */
 function createInterface(map, appid, interfaceid, expeditions){
     const userInterface = document.createElement('div');
     userInterface.id = interfaceid;
@@ -145,6 +170,11 @@ function createInterface(map, appid, interfaceid, expeditions){
     app.appendChild(userInterface)
 }
 
+/**
+ * Creates and fills the legend of the map.
+ * @param {Object} map - the leaflet map object
+ * @param {array} expeditions - Array of all loaded expeditions
+ */
 function createLegend(map, expeditions){
     let legend = L.control({position: 'bottomright'});
 
@@ -163,6 +193,11 @@ function createLegend(map, expeditions){
     legend.addTo(map)
 }
 
+/**
+ * Updates the content of the legend of the map.
+ * @param {Object} map - the leaflet map object
+ * @param {array} expeditions - Array of all loaded expeditions
+ */
 export function updateLegend(map, expeditions){
     let legend = document.getElementsByClassName("legend")[0];
     for (let i = 0; i < expeditions.length; i++) {
@@ -171,6 +206,10 @@ export function updateLegend(map, expeditions){
     }
 }
 
+/**
+ * Initiates the leaflet map object.
+ * @param {string} id - The id of the container into which the map will be rendered.
+ */
 function initMapObject(id){
     let map = L.map(id, {worldCopyJump: true, editable: true}).setView({lon: 0, lat: 10}, 3);
 
@@ -191,14 +230,6 @@ function initMapObject(id){
     L.control.scale().addTo(map);
 
     return map;
-}
-
-export async function drawAllExpeditions(lastExpeditionId, map){
-    let addedExpeditions;
-    for (let i =1; i <= lastExpeditionId; i++) {
-        addedExpeditions = await loadExpedition(i, map)
-    }
-    return addedExpeditions
 }
 
 await initApp('map', 'application')
