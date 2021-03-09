@@ -46,3 +46,53 @@ export function concatArray(array) {
 export function buildImagePath(exp, seq, file) {
     return "http://mapping-expeditions.de/images/" + exp + "/" + seq + "/" + file
 }
+
+export function removeMultipleLayers(layers, map){
+    for (const [key, value] of Object.entries(layers)) {
+        if(!value._url){
+            map.removeLayer(value)
+        }
+    }
+}
+
+export function getColorForExpedition(exp_id) {
+    const lineColors = [
+        "#a93226",
+        "#7d3c98",
+        "#2e86c1",
+        "#17a589",
+        "#229954",
+        "#f1c40f",
+        "#d35400",
+        "#34495e"
+    ]
+    return lineColors[exp_id]
+}
+
+export function transformCoordinatesArrayToObjects(coordinates){
+    for(let i = 0; i < coordinates.length;i++){
+        coordinates[i] = {lat: coordinates[i][0], lng: coordinates[i][1]}
+    }
+}
+
+export function combineLatLngArraysOfFeature(feature){
+    for(let i=0;i<feature._latlngs[1].length;i++){
+        feature._latlngs[0].push(feature._latlngs[1][i])
+    }
+}
+
+export function ordinal_suffix_of(i) {
+    i = parseInt(i)
+    let j = i % 10,
+        k = i % 100;
+    if (j === 1 && k !== 11) {
+        return i + "st";
+    }
+    if (j === 2 && k !== 12) {
+        return i + "nd";
+    }
+    if (j === 3 && k !== 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}

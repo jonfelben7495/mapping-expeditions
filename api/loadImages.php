@@ -1,11 +1,7 @@
 <?php
+    include "database.php";
 	$e = intval($_GET['e']);
 	$p = intval($_GET['p']);
-
-    $dbServerName = "db5001272959.hosting-data.io";
-    $dbUsername = "dbu1070012";
-    $dbPassword = "dhW$2021";
-    $dbName = "dbs1087431";
 
     $conn = mysqli_connect($dbServerName, $dbUsername, $dbPassword, $dbName);
 

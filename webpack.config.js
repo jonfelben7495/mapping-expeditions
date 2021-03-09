@@ -20,6 +20,11 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Development',
+        }),
+        new CopyPlugin({
+            patterns: [
+                { from: "src/markers", to: "markers" }
+            ],
         })
     ],
     output: {

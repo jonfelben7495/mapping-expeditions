@@ -1,7 +1,12 @@
-import {addDrawEventListener, initDrawControl, setLayerName} from "./draw";
+import {addDrawEventListener, deleteDrawnItems, initDrawControl, removeDrawControl, setLayerName} from "./draw";
 import {getLastExpeditionId} from "./apiCalls";
+import {combineLatLngArraysOfFeature, removeAllLayers, removeMultipleLayers} from "./utilities";
+import {loadExpedition} from "./expedition";
 
 let currentLayer = "";
+let state = {
+    drawControlActivated: false
+}
 
 export function createSubmitButton(id, label){
     const button = document.createElement("button");
@@ -19,26 +24,56 @@ export function createNewExpeditionButton(id, label, map, interfaceid){
     button.innerHTML = label
 
     button.addEventListener('click', async function(){
-        let newExpeditionId = await getLastExpeditionId() + 1;
-        let drawnItems = initDrawControl(map);
-        addDrawEventListener(map, drawnItems, newExpeditionId, true);
-
+        addDrawEventListener(map, true);
+        changeExplanationText("add")
         toggleExpeditionFormVisibility()
+        toggleFormsVisibility()
+        hideNewAndAddButtons()
+        showCancelButton()
+        clearAllInputFields()
     })
 
     return button;
 }
 
-export function createAddToExpeditionButton(id, label, map, interfaceid){
+export function createAddToExpeditionButton(id, label, map, interfaceid, expeditions){
     const button = document.createElement("button");
     button.id = id;
     button.classList.add("addToExpedition-button")
     button.innerHTML = label
 
     button.addEventListener('click', async function(){
-        let expeditionId = 1;
-        let drawnItems = initDrawControl(map);
-        addDrawEventListener(map, drawnItems, expeditionId, false);
+        let allElements = getAllElementsFromArray(expeditions)
+        addOnClickToAllElements(allElements, map);
+        changeExplanationText("editStart")
+        toggleExpeditionFormVisibility()
+        toggleFormsVisibility()
+        hideNewAndAddButtons()
+        showCancelButton()
+    })
+
+    return button;
+}
+
+export function createCancelButton(id, label, map, interfaceid){
+    const button = document.createElement("button");
+    button.id = id;
+    button.classList.add("cancel-button", "hide")
+    button.innerHTML = label
+
+    button.addEventListener('click', async function(){
+        let lastExpeditionId = await getLastExpeditionId();
+        removeDrawControl(map)
+        toggleFormsVisibility()
+        showNewAndAddButtons()
+        hideCancelAndSaveButton()
+        deleteDrawnItems(map)
+        changeExplanationText("")
+        hideAddExpeditionInterface(map)
+        removeMultipleLayers(map._layers, map)
+        for (let i = 1; i <= lastExpeditionId; i++) {
+            await loadExpedition(i, map)
+        }
     })
 
     return button;
@@ -46,13 +81,14 @@ export function createAddToExpeditionButton(id, label, map, interfaceid){
 
 export function createNewExpeditionForm(){
     const form = document.createElement("form");
-    form.classList.add("newExpedition-form");
+    form.classList.add("newExpedition-form", "hide");
 
     const expNameDiv = document.createElement('div');
 
+
     const expNameLabel = document.createElement("label");
     expNameLabel.setAttribute("for", "newExpedition-name");
-    expNameLabel.innerHTML = "Name der Expedition:";
+    expNameLabel.innerHTML = "Expedition name:";
 
     const expNameInput = document.createElement("input");
     expNameInput.setAttribute("name", "newExpedition-name");
@@ -66,7 +102,7 @@ export function createNewExpeditionForm(){
 
     const expLeaderLabel = document.createElement("label");
     expLeaderLabel.setAttribute("for", "newExpedition-leader");
-    expLeaderLabel.innerHTML = "Leiter der Expedition:";
+    expLeaderLabel.innerHTML = "Expedition leader:";
 
     const expLeaderInput = document.createElement("input");
     expLeaderInput.setAttribute("name", "newExpedition-leader");
@@ -80,7 +116,7 @@ export function createNewExpeditionForm(){
 
     const expStartLabel = document.createElement("label");
     expStartLabel.setAttribute("for", "newExpedition-startDate");
-    expStartLabel.innerHTML = "Startdatum:";
+    expStartLabel.innerHTML = "Start date:";
 
     const expStartInput = document.createElement("input");
     expStartInput.setAttribute("name", "newExpedition-startDate");
@@ -94,7 +130,7 @@ export function createNewExpeditionForm(){
 
     const expEndLabel = document.createElement("label");
     expEndLabel.setAttribute("for", "newExpedition-endDate");
-    expEndLabel.innerHTML = "Enddatum:";
+    expEndLabel.innerHTML = "End date:";
 
     const expEndInput = document.createElement("input");
     expEndInput.setAttribute("name", "newExpedition-endDate");
@@ -112,24 +148,52 @@ export function createNewExpeditionForm(){
     return form;
 }
 
+export function createExplanationText(){
+    const explanation = document.createElement("div");
+    explanation.id = "explanation";
+    return explanation
+}
+
+export function changeExplanationText(useCase){
+    let explanation = document.getElementById("explanation")
+    if (useCase === "add") {
+        explanation.innerHTML = "You can add new stations or markers for the expedition by choosing 'Draw a marker' in the draw options on the left side. The route of the expedition can be drawn with a polyline ('Draw a polyline'). You can always edit your drawn items with 'Edit layers'. Push your input to the database with the 'Save' button."
+    } else if (useCase === "editStart"){
+        explanation.innerHTML = "Choose an expedition to edit by clicking on one of its markers or its route."
+    } else if (useCase === "edit") {
+        explanation.innerHTML = "You can add new stations or markers for the expedition by choosing 'Draw a marker' in the draw options on the left side. You can either add to the route of the expedition by drawing a new polyline (which will add your input to the end of the route) or by editing the already exisiting polyline with 'Edit layers'. Push your changes to the database with the 'Save' button."
+    } else {
+        explanation.innerHTML = useCase
+    }
+}
+
 function toggleExpeditionFormVisibility(){
     const newExpForm = document.querySelector(".newExpedition-form");
     if(newExpForm.style.display !== "block") {
-        newExpForm.style.display = "block";
+        newExpForm.classList.remove("hide")
         return
     }
-    newExpForm.style.display = "none";
+    newExpForm.classList.add("hide")
+}
+
+function toggleFormsVisibility(){
+    const forms = document.getElementById("forms")
+    if(forms.style.display !== "block") {
+        forms.classList.remove("hide")
+        return
+    }
+    forms.classList.add("hide")
 }
 
 export function createNewPlaceForm(){
     const form = document.createElement("form");
-    form.classList.add("newPlace-form");
+    form.classList.add("newPlace-form", "hide");
 
     const placeNameDiv = document.createElement('div');
 
     const placeNameLabel = document.createElement("label");
     placeNameLabel.setAttribute("for", "newPlace-name");
-    placeNameLabel.innerHTML = "Name des Ortes:";
+    placeNameLabel.innerHTML = "Place name:";
 
     const placeNameInput = document.createElement("input");
     placeNameInput.setAttribute("name", "newPlace-name");
@@ -171,7 +235,7 @@ export function createNewPlaceForm(){
 
     const placeDateLabel = document.createElement("label");
     placeDateLabel.setAttribute("for", "newPlace-date");
-    placeDateLabel.innerHTML = "Datum:";
+    placeDateLabel.innerHTML = "Date:";
 
     const placeDateInput = document.createElement("input");
     placeDateInput.setAttribute("name", "newPlace-date");
@@ -185,7 +249,7 @@ export function createNewPlaceForm(){
 
     const placeInfoLabel = document.createElement("label");
     placeInfoLabel.setAttribute("for", "newPlace-info");
-    placeInfoLabel.innerHTML = "Zitat aus Quelle:";
+    placeInfoLabel.innerHTML = "Quote from source:";
 
     const placeInfoInput = document.createElement("input");
     placeInfoInput.setAttribute("name", "newPlace-info");
@@ -199,7 +263,7 @@ export function createNewPlaceForm(){
 
     const placeSrcLabel = document.createElement("label");
     placeSrcLabel.setAttribute("for", "newPlace-src");
-    placeSrcLabel.innerHTML = "Quelle:";
+    placeSrcLabel.innerHTML = "Source:";
 
     const placeSrcInput = document.createElement("input");
     placeSrcInput.setAttribute("name", "newPlace-src");
@@ -214,7 +278,7 @@ export function createNewPlaceForm(){
 
     const placeImgLabel = document.createElement("label");
     placeImgLabel.setAttribute("for", "newPlace-img");
-    placeImgLabel.innerHTML = "Bilder:";
+    placeImgLabel.innerHTML = "Images:";
 
     placeImgDiv.appendChild(placeImgLabel)
 
@@ -229,9 +293,34 @@ export function createNewPlaceForm(){
     return form;
 }
 
+export function showExpeditionForm(){
+    const newPlaceForm = document.querySelector(".newExpedition-form");
+    newPlaceForm.classList.remove("hide")
+}
+
+export function hideExpeditionForm(){
+    const newPlaceForm = document.querySelector(".newExpedition-form");
+    newPlaceForm.classList.add("hide")
+}
+
 export function showPlaceForm(){
     const newPlaceForm = document.querySelector(".newPlace-form");
-    newPlaceForm.style.display = "block";
+    newPlaceForm.classList.remove("hide")
+}
+
+export function hidePlaceForm(){
+    const newPlaceForm = document.querySelector(".newPlace-form");
+    newPlaceForm.classList.add("hide")
+}
+
+export function showImgForm(){
+    const imgForm = document.querySelector("#images-forms");
+    imgForm.classList.remove("hide")
+}
+
+export function hideImgForm(){
+    const imgForm = document.querySelector("#images-forms");
+    imgForm.classList.add("hide")
 }
 
 export function setPlaceFormName(name){
@@ -278,4 +367,121 @@ export function resetPlaceFormImg(){
     const imgInput = document.getElementById("newPlace-img")
 
     imgInput.value = null;
+}
+
+function hideNewAndAddButtons(){
+    let newButton = document.querySelector(".newExpedition-button");
+    let addButton = document.querySelector(".addToExpedition-button");
+
+    newButton.classList.add("hide")
+    addButton.classList.add("hide")
+}
+
+function hideCancelAndSaveButton(){
+    let cancelButton = document.querySelector(".cancel-button");
+    let saveButton = document.querySelector(".submit-button");
+
+    cancelButton.classList.add("hide")
+    saveButton.classList.add("hide")
+}
+
+function showNewAndAddButtons(){
+    let newButton = document.querySelector(".newExpedition-button");
+    let addButton = document.querySelector(".addToExpedition-button");
+
+    newButton.classList.remove("hide")
+    addButton.classList.remove("hide")
+}
+
+function showCancelButton(){
+    let cancelButton = document.querySelector(".cancel-button");
+
+    cancelButton.classList.remove("hide")
+}
+
+export function hideAddExpeditionInterface(map){
+    hideExpeditionForm();
+    hidePlaceForm();
+    hideImgForm();
+    toggleFormsVisibility()
+    hideCancelAndSaveButton();
+    showNewAndAddButtons();
+    removeDrawControl(map)
+}
+
+function getAllElementsFromArray(array){
+    let returnArray = [];
+    for (let i=0;i<array.length;i++){
+        returnArray.push(array[i][0])
+        returnArray.push(array[i][1])
+    }
+    return returnArray
+}
+
+function addOnClickToAllElements(array, map){
+    for(let i=0;i<array.length;i++){
+        if(Array.isArray(array[i])) {
+            for(let j=0;j<array[i].length;j++){
+                array[i][j]._events.click = [];
+                array[i][j].on('click', function (){
+                    prepareMapForEdit(map, array, array[i][j].expId)
+                })
+            }
+        } else {
+            if(array[i] !== null) {
+                array[i]._events.click = [];
+                array[i].on('click', function(){
+                    prepareMapForEdit(map, array, array[i].expId)
+                })
+            }
+        }
+
+    }
+}
+
+function prepareMapForEdit(map, array, expId){
+    let objects = [];
+    hideInfoContainer()
+    for(let i=0;i<array.length;i++){
+        if(Array.isArray(array[i])) {
+            for(let j=0;j<array[i].length;j++){
+                if(array[i][j].expId !== expId){
+                    map.removeLayer(array[i][j])
+                } else {
+                    objects.push(array[i][j])
+                }
+            }
+        } else {
+            if(array[i] === null){
+                break;
+            }
+            if(array[i].expId !== expId){
+                map.removeLayer(array[i])
+            } else {
+                if(array[i]._latlngs.length > 1){
+                    combineLatLngArraysOfFeature(array[i])
+                }
+                objects.push(array[i])
+            }
+        }
+    }
+    changeExplanationText("edit")
+    addDrawEventListener(map, false, objects)
+}
+
+function hideInfoContainer(){
+    let container = document.getElementById("info-container")
+    container.classList.add("hide")
+}
+
+export function showSaveButton(){
+    const submitButton = document.getElementById('button-submit');
+    submitButton.classList.remove("hide")
+}
+
+function clearAllInputFields(){
+    let inputs = document.querySelectorAll("input");
+    for(let i=0;i<inputs.length;i++){
+        inputs[i].value = ""
+    }
 }

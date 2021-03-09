@@ -9,12 +9,13 @@ import Shadow from 'leaflet/dist/images/marker-shadow.png'
 import {addDrawEventListener, initDrawControl} from "./draw";
 import {loadExpedition} from "./expedition";
 import {
-    createAddToExpeditionButton,
+    createAddToExpeditionButton, createCancelButton, createExplanationText,
     createNewExpeditionButton, createNewExpeditionForm,
     createNewPlaceForm,
     createSubmitButton
 } from "./interface";
 import {getLastExpeditionId} from "./apiCalls";
+import {getColorForExpedition} from "./utilities";
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
@@ -25,13 +26,13 @@ async function initApp(mapid, appid){
     createApp(appid);
     createMapObject(mapid, appid);
     let mapObject = initMapObject(mapid);
-    createInterface(mapObject, appid, 'interface')
-    createInfoContainer(appid);
     let lastExpeditionId = await getLastExpeditionId();
+    let addedExpeditions = await drawAllExpeditions(lastExpeditionId, mapObject)
 
-    for (let i = 1; i <= lastExpeditionId; i++) {
-        loadExpedition(i, mapObject)
-    }
+    createInterface(mapObject, appid, 'interface', addedExpeditions)
+    createInfoContainer(appid);
+
+    createLegend(mapObject, addedExpeditions)
 }
 
 function createApp(id){
@@ -43,6 +44,14 @@ function createApp(id){
 function createInfoContainer(appid){
     const container = document.createElement('div');
     container.id = "info-container";
+    container.classList.add("hide")
+
+    const close = document.createElement('span');
+    close.classList.add("info-container-close");
+    close.innerHTML = "&times;"
+    close.addEventListener("click", function (){
+        container.classList.add("hide")
+    })
 
     const expContainer = document.createElement('div');
     expContainer.id = "info-container-exp";
@@ -91,6 +100,7 @@ function createInfoContainer(appid){
     placeContainer.appendChild(infoPlaceSrc)
     placeContainer.appendChild(infoPlaceImages)
 
+    container.appendChild(close)
     container.appendChild(expContainer);
     container.appendChild(placeContainer);
 
@@ -106,29 +116,63 @@ function createMapObject(mapid, appid){
     app.appendChild(mapObject);
 }
 
-function createInterface(map, appid, interfaceid){
+function createInterface(map, appid, interfaceid, expeditions){
     const userInterface = document.createElement('div');
     userInterface.id = interfaceid;
-    const newExpButton = createNewExpeditionButton('button-newExpedition', 'Neue Expedition anlegen', map, interfaceid);
-    const addToExpButton = createAddToExpeditionButton('button-addToExpedition', 'Zu bestehender Expedition hinzufügen', map, interfaceid)
-    const submitButton = createSubmitButton('button-submit', 'Speichern');
+    const newExpButton = createNewExpeditionButton('button-newExpedition', 'Add new expedition', map, interfaceid);
+    const addToExpButton = createAddToExpeditionButton('button-addToExpedition', 'Edit existing expedition', map, interfaceid, expeditions)
+    const cancelButton = createCancelButton('button-cancel', 'Cancel', map)
+    const submitButton = createSubmitButton('button-submit', 'Save');
+    const explanation = createExplanationText();
     const newExpeditionForm = createNewExpeditionForm();
     const newPlaceForm = createNewPlaceForm();
+    const imagesForms = document.createElement('div');
+    imagesForms.id = "images-forms"
+    imagesForms.classList.add("hide")
     const forms = document.createElement('div');
     forms.id = "forms"
     forms.appendChild(newExpeditionForm)
     forms.appendChild(newPlaceForm)
+    forms.appendChild(imagesForms)
 
     const app = document.getElementById(appid);
     userInterface.appendChild(newExpButton);
     userInterface.appendChild(addToExpButton);
+    userInterface.appendChild(cancelButton);
     userInterface.appendChild(submitButton);
+    userInterface.appendChild(explanation)
     userInterface.appendChild(forms);
     app.appendChild(userInterface)
 }
 
+function createLegend(map, expeditions){
+    let legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (map) {
+
+        let div = L.DomUtil.create('div', 'info legend')
+
+        for (let i = 0; i < expeditions.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColorForExpedition(expeditions[i][1].expId - 1) + '"></i> ' + expeditions[i][1].expName + '<br/>';
+        }
+
+        return div;
+    };
+
+    legend.addTo(map)
+}
+
+export function updateLegend(map, expeditions){
+    let legend = document.getElementsByClassName("legend")[0];
+    for (let i = 0; i < expeditions.length; i++) {
+        legend.innerHTML +=
+            '<i style="background:' + getColorForExpedition(expeditions[i][1].expId - 1) + '"></i> ' + expeditions[i][1].expName + '<br/>';
+    }
+}
+
 function initMapObject(id){
-    let map = L.map(id, {worldCopyJump: true}).setView({lon: 0, lat: 0}, 2);
+    let map = L.map(id, {worldCopyJump: true, editable: true}).setView({lon: 0, lat: 10}, 3);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         minZoom: 2,
@@ -147,6 +191,14 @@ function initMapObject(id){
     L.control.scale().addTo(map);
 
     return map;
+}
+
+export async function drawAllExpeditions(lastExpeditionId, map){
+    let addedExpeditions;
+    for (let i =1; i <= lastExpeditionId; i++) {
+        addedExpeditions = await loadExpedition(i, map)
+    }
+    return addedExpeditions
 }
 
 await initApp('map', 'application')

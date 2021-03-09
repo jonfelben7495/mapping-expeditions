@@ -1,13 +1,9 @@
 <?php
+    include "database.php";
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $q = intval($_GET['q']);
          $data = json_decode(file_get_contents('php://input'), true);
          echo $data["exp_id"];
-
-             $dbServerName = "db5001272959.hosting-data.io";
-             $dbUsername = "dbu1070012";
-             $dbPassword = "dhW$2021";
-             $dbName = "dbs1087431";
 
              $conn = mysqli_connect($dbServerName, $dbUsername, $dbPassword, $dbName);
 
