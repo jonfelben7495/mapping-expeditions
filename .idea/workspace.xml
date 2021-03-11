@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83252615-6256-4db0-8799-00f050b7f5c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/database.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/apiCalls.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/apiCalls.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/draw.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/expedition.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/expedition.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interface.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interface.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +99,7 @@
       <workItem from="1614850006113" duration="3444000" />
       <workItem from="1615200525086" duration="14941000" />
       <workItem from="1615281999529" duration="17173000" />
-      <workItem from="1615456349189" duration="8939000" />
+      <workItem from="1615456349189" duration="9946000" />
     </task>
     <task id="LOCAL-00001" summary="marker">
       <created>1608560339927</created>
