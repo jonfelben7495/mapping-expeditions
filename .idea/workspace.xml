@@ -2,13 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83252615-6256-4db0-8799-00f050b7f5c4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/database.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/apiCalls.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/apiCalls.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/draw.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/expedition.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/expedition.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/interface.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interface.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utilities.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +50,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="14.15.1" />
     <property name="javascript.nodejs.core.library.typings.version" value="14.14.10" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../mapping-expeditions-master" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="settings.nodejs" />
     <property name="vue.rearranger.settings.migration" value="true" />
@@ -104,7 +105,8 @@
       <workItem from="1614675037325" duration="10889000" />
       <workItem from="1614850006113" duration="3444000" />
       <workItem from="1615200525086" duration="14941000" />
-      <workItem from="1615281999529" duration="16943000" />
+      <workItem from="1615281999529" duration="17173000" />
+      <workItem from="1615456349189" duration="8939000" />
     </task>
     <task id="LOCAL-00001" summary="marker">
       <created>1608560339927</created>

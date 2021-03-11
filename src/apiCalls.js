@@ -20,7 +20,7 @@ export async function getExpeditionRoute(exp_id) {
  */
 export async function getLastExpeditionId(){
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastExpedition.php");
-    result = JSON.parse(result)[0]
+    result = result[0];
     result = result[Object.keys(result)[0]];
     if (result !== null) {
         return parseInt(result);
@@ -35,7 +35,7 @@ export async function getLastExpeditionId(){
  */
 export async function getLastMarkerSequence(exp_id){
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastMarker.php?q=" + exp_id);
-    result = JSON.parse(result)[0]
+    result = result[0]
     result = result[Object.keys(result)[0]];
     if (result !== null) {
         return parseInt(result);
@@ -49,7 +49,7 @@ export async function getLastMarkerSequence(exp_id){
  */
 export async function getLastSequenceOfRoute(exp_id){
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastSequence.php?q=" + exp_id);
-    result = JSON.parse(result)[0]
+    result = result[0]
     result = result[Object.keys(result)[0]];
     if (result !== null) {
         return parseInt(result);
@@ -63,7 +63,7 @@ export async function getLastSequenceOfRoute(exp_id){
  */
 export async function getLastPlaceId() {
     let result = await makeRequest("GET", "http://mapping-expeditions.de/api/getLastPlaceId.php");
-    result = JSON.parse(result)[0]
+    result = result[0]
     result = result[Object.keys(result)[0]];
     if (result !== null) {
         return parseInt(result);
@@ -206,6 +206,7 @@ export async function sendRoute(exp_id, array){
  * @param {bool} hasImages - Whether there are images of the places stored or not
  */
 export async function updateMarkerData(expId, placeId, name, sequence, date, info, src, hasImages) {
+    hasImages = hasImages ? 1 : 0;
     let obj = {
         "expId": expId,
         "placeId": placeId,
@@ -252,28 +253,20 @@ export async function deleteRoute(expId) {
  * @param {string} method - Method of the http request
  * @param {string} url - URL of the php file to make the request to
  */
-function makeRequest(method, url) {
-    return new Promise(function (resolve, reject) {
-        let xhr = new XMLHttpRequest();
-        xhr.open(method, url);
-        xhr.onload = function () {
-            if (this.status >= 200 && this.status < 300) {
-                resolve(xhr.response);
-            } else {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            }
-        };
-        xhr.onerror = function () {
-            reject({
-                status: this.status,
-                statusText: xhr.statusText
-            });
-        };
-        xhr.send();
-    });
+async function makeRequest(method, url) {
+    const response = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+
+    })
+    return response.json()
 }
 
 /**
