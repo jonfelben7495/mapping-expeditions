@@ -37,7 +37,6 @@ export async function loadExpedition(exp_id, map){
  */
 async function loadExpeditionMarkers(exp_id, map, color) {
     let expeditionMarkers = await getExpeditionMarkers(exp_id)
-    expeditionMarkers = JSON.parse(expeditionMarkers);
     expeditionMarkers.sort(compareBySequence);
 
     let markers = [];
@@ -46,14 +45,13 @@ async function loadExpeditionMarkers(exp_id, map, color) {
         let images = [];
         if(expeditionMarkers[i].hasImages === "1"){
             images = await getImages(exp_id, expeditionMarkers[i].placeid);
-            images = JSON.parse(images)
         }
         marker.expId = expeditionMarkers[i].exp_id;
         marker.expName = expeditionMarkers[i].exp_name;
         marker.expLeader = expeditionMarkers[i].leader;
         marker.startDate = expeditionMarkers[i].startdate;
         marker.endDate =expeditionMarkers[i].enddate;
-        marker.placeName = expeditionMarkers[i].place_name;
+        marker.placeName = expeditionMarkers[i].name;
         marker.placeId = expeditionMarkers[i].placeid;
         marker.sequence = expeditionMarkers[i].sequence
         marker.date = expeditionMarkers[i].date;
@@ -104,7 +102,6 @@ async function loadExpeditionMarkers(exp_id, map, color) {
  */
 export async function loadExpeditionRoute(exp_id, map, lineColor) {
     let expeditionRoute = await getExpeditionRoute(exp_id);
-    expeditionRoute = JSON.parse(expeditionRoute);
     expeditionRoute.sort(compareBySequence);
 
     if(expeditionRoute.length > 0){

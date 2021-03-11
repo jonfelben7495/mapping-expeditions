@@ -33,6 +33,8 @@ import {updateLegend} from "./index";
 let currentLayer = "";
 let drawControl;
 let drawnItems;
+let newExpedition;
+let mapObject;
 
 /**
  * Initiates the draw control for drawing on the map.
@@ -80,6 +82,8 @@ export function removeDrawControl(map){
  * @param {boolean} isNewExpedition - Defines whether a new expedition is drawn or an existing expedition is edited.
  */
 export function addDrawEventListener(map, isNewExpedition, arrayOfElements){
+    newExpedition = isNewExpedition;
+    mapObject = map;
     drawnItems = initDrawControl(map, arrayOfElements)
     let seq = 0;
     if(arrayOfElements){
@@ -121,46 +125,49 @@ export function addDrawEventListener(map, isNewExpedition, arrayOfElements){
         submitButton.classList.remove("hide")
     })
 
-    submitButton.addEventListener('click', async function () {
-        let layers = drawnItems._layers;
-        let lines = [], markers = [], lineCoordinates = [], markerCoordinates = [];
+    submitButton.removeEventListener('click', submitExpedition)
+    submitButton.addEventListener('click', submitExpedition)
+}
 
-        sortLayers(markers, lines, layers);
+async function submitExpedition() {
+    let layers = drawnItems._layers;
+    let lines = [], markers = [], lineCoordinates = [], markerCoordinates = [];
 
-        for (let i = 0; i < markers.length; i++) {
-            markerCoordinates.push(markers[i]._latlng);
-            markerCoordinates[i].name = markers[i].name;
-            markerCoordinates[i].date = markers[i].date;
-            markerCoordinates[i].info = markers[i].info;
-            markerCoordinates[i].src = markers[i].src;
-            markerCoordinates[i].img = markers[i].img;
-            markerCoordinates[i].imgMetaData = markers[i].imgMetaData;
-            markerCoordinates[i].placeId = markers[i].placeId;
-            markerCoordinates[i].sequence = markers[i].sequence;
-            markerCoordinates[i].dataEdited = markers[i].dataEdited
-            markerCoordinates[i].coordinatesChanged = markers[i].coordinatesChanged
-        }
+    sortLayers(markers, lines, layers);
 
-        for (let i = 0; i < lines.length; i++) {
-            for (let j = 0; j < lines[i]._latlngs.length; j++) {
-                if(lines[i]._latlngs[j].length > 2){
-                    lineCoordinates.push(lines[i]._latlngs[0]);
-                    break;
-                } else {
-                    lineCoordinates.push(lines[i]._latlngs[j]);
-                }
+    for (let i = 0; i < markers.length; i++) {
+        markerCoordinates.push(markers[i]._latlng);
+        markerCoordinates[i].name = markers[i].name;
+        markerCoordinates[i].date = markers[i].date;
+        markerCoordinates[i].info = markers[i].info;
+        markerCoordinates[i].src = markers[i].src;
+        markerCoordinates[i].img = markers[i].img;
+        markerCoordinates[i].imgMetaData = markers[i].imgMetaData;
+        markerCoordinates[i].placeId = markers[i].placeId;
+        markerCoordinates[i].sequence = markers[i].sequence;
+        markerCoordinates[i].dataEdited = markers[i].dataEdited
+        markerCoordinates[i].coordinatesChanged = markers[i].coordinatesChanged
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        for (let j = 0; j < lines[i]._latlngs.length; j++) {
+            if (lines[i]._latlngs[j].length > 2) {
+                lineCoordinates.push(lines[i]._latlngs[0]);
+                break;
+            } else {
+                lineCoordinates.push(lines[i]._latlngs[j]);
             }
         }
+    }
 
-        if(isNewExpedition){
-            await addNewExpedition(markerCoordinates, lineCoordinates, map, layers)
-        } else {
-            let expeditionID = arrayOfElements[0].expId;
-            await addToExistingExpedition(expeditionID, markerCoordinates, lineCoordinates, map, layers)
-        }
+    if (newExpedition) {
+        await addNewExpedition(markerCoordinates, lineCoordinates, mapObject, layers)
+    } else {
+        let expeditionID = markers[0].expId;
+        await addToExistingExpedition(expeditionID, markerCoordinates, lineCoordinates, mapObject, layers)
+    }
 
-        changeExplanationText("")
-    })
+    changeExplanationText("")
 }
 
 /**

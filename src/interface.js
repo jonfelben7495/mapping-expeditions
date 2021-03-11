@@ -35,7 +35,6 @@ export function createNewExpeditionButton(id, label, map){
     button.innerHTML = label
 
     button.addEventListener('click', async function(){
-        console.log(map)
         addDrawEventListener(map, true);
         changeExplanationText("add")
         toggleExpeditionFormVisibility()
