@@ -39,6 +39,30 @@
     overflow-y: scroll;
 }
 
+#img-lightbox {
+    z-index: 99999;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    top: 0;
+    display: flex;
+}
+
+#img-lightbox-inner {
+    background-color: white;
+    max-width: 80vw;
+    max-height: 80vh;
+    margin-left: auto;
+    margin-right: auto;
+    align-self: center;
+}
+
+#img-lightbox-inner-img {
+    max-height: 70vh;
+    max-width: 70vw;
+}
+
 .info-container-close {
     float: right;
     cursor: pointer;
@@ -48,11 +72,11 @@
 }
 
 .hide {
-    display: none;
+    display: none !important;
 }
 
 .inlineBlock {
-    display: inline-block;
+    display: inline-block !important;
 }
 
 .newExpedition-form{
@@ -81,6 +105,7 @@
     max-width: 30%;
     height: auto;
     vertical-align: top;
+    cursor: pointer;
 }
 
 .newExpedition-button, .addToExpedition-button {
