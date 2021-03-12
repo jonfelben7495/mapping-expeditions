@@ -1,6 +1,7 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    include "database.php";
     if (isset($_FILES['files'])) {
         $exp = intval($_GET['e']);
         $place = intval($_GET['p']);

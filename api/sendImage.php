@@ -12,7 +12,7 @@
 
              echo "Connected successfully";
 
-             $sql = "INSERT INTO images (exp_id, place_id, sequence, file_name, img_description, img_creator, img_src) VALUES (" . $data["exp_id"] . "," . $data["place_id"] . "," . $data["seq"] . ",'" . $data["fileName"] . "','" . $data["description"] . "','" . $data["creator"] . "','" . $data["src"] . "')";
+             $sql = "INSERT INTO images (exp_id, place_id, file_name, img_description, img_creator, img_src) VALUES (" . $data["exp_id"] . "," . $data["place_id"] . ",'" . $data["fileName"] . "','" . $data["description"] . "','" . $data["creator"] . "','" . $data["src"] . "')";
              if (mysqli_query($conn, $sql)) {
                    echo "New record created successfully";
              } else {

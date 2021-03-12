@@ -36,6 +36,7 @@ async function initApp(mapid, appid){
 
     createInterface(mapObject, appid, 'interface', addedExpeditions)
     createInfoContainer(appid);
+    createImgLightbox(appid);
 
     createLegend(mapObject, addedExpeditions)
 }
@@ -116,6 +117,38 @@ function createInfoContainer(appid){
     container.appendChild(close)
     container.appendChild(expContainer);
     container.appendChild(placeContainer);
+
+    const app = document.getElementById(appid);
+    app.appendChild(container);
+}
+
+/**
+ * Creates the image lightbox, in which images can be displayed in full size.
+ * @param {string} appid - ID of the whole application container
+ */
+function createImgLightbox(appid){
+    const container = document.createElement('div');
+    container.id = "img-lightbox";
+    container.classList.add("hide")
+
+    const imgContainer = document.createElement('div')
+    imgContainer.id = "img-lightbox-inner";
+
+    const image = document.createElement("img")
+    image.id = "img-lightbox-inner-img"
+
+    const imgText = document.createElement('div')
+    imgText.id = "img-lightbox-inner-text"
+
+    container.addEventListener("click", function (e){
+        if (e.target !== imgContainer) {
+            container.classList.add("hide")
+        }
+    });
+
+    imgContainer.appendChild(image)
+    imgContainer.appendChild(imgText)
+    container.appendChild(imgContainer)
 
     const app = document.getElementById(appid);
     app.appendChild(container);

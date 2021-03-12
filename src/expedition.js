@@ -83,6 +83,9 @@ async function loadExpeditionMarkers(exp_id, map, color) {
                 for (let j = 0; j < images.length; j++){
                     let image = document.createElement('img');
                     image.src = buildImagePath(exp_id, expeditionMarkers[i].sequence, images[j].file_name)
+                    image.addEventListener("click", function(e){
+                        openImgInLightbox(e.target, images[j]);
+                    })
                     infoPlaceImages.appendChild(image)
                 }
             }
@@ -265,4 +268,20 @@ function getMarker(color){
  */
 function colorToFileName(color){
     return "./markers/" + color.replace("#", "") + ".svg"
+}
+
+/**
+ * Inserts the clicked image into the image lightbox.
+ * @param {Object} target - The clicked image elemetn
+ * @param {Object} image - The images meta data from the database.
+ */
+function openImgInLightbox(target, image) {
+    const lightbox = document.getElementById("img-lightbox")
+    lightbox.classList.remove("hide");
+
+    const lightboxImage = document.getElementById("img-lightbox-inner-img")
+    lightboxImage.src = target.src;
+
+    const lightboxText = document.getElementById("img-lightbox-inner-text");
+    lightboxText.innerHTML = image.img_description + ".<br/>Urheber: " + image.img_creator + ". Quelle: " + image.img_src;
 }
