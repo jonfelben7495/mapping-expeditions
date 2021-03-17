@@ -25,7 +25,7 @@ import {
     setPlaceFormLatLng,
     setPlaceFormName,
     setPlaceFormSrc, showImgForm,
-    showPlaceForm, showSaveButton
+    showPlaceForm, showSaveButton, updateAddToExpeditionButton
 } from "./interface";
 import {removeMultipleLayers} from "./utilities";
 import {updateLegend} from "./index";
@@ -286,6 +286,7 @@ async function addToExistingExpedition(expeditionId, markerCoordinates, lineCoor
         await sendRoute(expeditionId, allCoords)
     }
 
+    window.loadedExpeditions = []
     removeMultipleLayers(layers, map)
     drawnItems = new L.FeatureGroup();
     hideAddExpeditionInterface(map);
@@ -293,7 +294,8 @@ async function addToExistingExpedition(expeditionId, markerCoordinates, lineCoor
 
     let lastExpeditionId = await getLastExpeditionId();
 
-    let expeditions = drawAllExpeditions(lastExpeditionId, map)
+    let expeditions = await drawAllExpeditions(lastExpeditionId, map)
+    updateAddToExpeditionButton(expeditions, map)
     updateLegend(map, expeditions)
 
     await loadExpedition(expeditionId, map)
@@ -739,9 +741,10 @@ function setExpeditionInputs(name, leader, startdate, enddate){
  * @param {Object} map - Leaflet map object
  */
 export async function drawAllExpeditions(lastExpeditionId, map){
-    let addedExpeditions;
+    let addedExpeditions = [];
     for (let i =1; i <= lastExpeditionId; i++) {
-        addedExpeditions = await loadExpedition(i, map)
+        addedExpeditions.push(await loadExpedition(i, map))
     }
+
     return addedExpeditions
 }

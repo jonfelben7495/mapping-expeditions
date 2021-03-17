@@ -233,6 +233,7 @@ function createLegend(map, expeditions){
  */
 export function updateLegend(map, expeditions){
     let legend = document.getElementsByClassName("legend")[0];
+    legend.innerHTML = ""
     for (let i = 0; i < expeditions.length; i++) {
         legend.innerHTML +=
             '<i style="background:' + getColorForExpedition(expeditions[i][1].expId - 1) + '"></i> ' + expeditions[i][1].expName + '<br/>';

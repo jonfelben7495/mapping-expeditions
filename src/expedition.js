@@ -1,5 +1,5 @@
 import L from "leaflet";
-import {getExpeditionMarkers, getExpeditionRoute, getImages} from "./apiCalls";
+import {getExpeditionMarkers, getExpeditionRoute, getImages, getLastExpeditionId} from "./apiCalls";
 import {
     buildImagePath,
     calculateLatForDateline,
@@ -11,8 +11,6 @@ import {
 } from "./utilities";
 import Shadow from 'leaflet/dist/images/marker-shadow.png'
 
-let loadedExpeditions = []
-
 /**
  * Loads and adds an expedition to the map.
  * @param {string} exp_id - ID of the expedition
@@ -22,11 +20,10 @@ export async function loadExpedition(exp_id, map){
     let lineColor = getColorForExpedition(exp_id-1)
     let expeditionMarkers = await loadExpeditionMarkers(exp_id, map, lineColor);
     let expeditionRoute = await loadExpeditionRoute(exp_id, map, lineColor);
-    loadedExpeditions.push([expeditionMarkers, expeditionRoute])
     copyExpeditionMarkers(expeditionMarkers, map, lineColor)
     copyExpeditionRoute(expeditionRoute, map, lineColor)
 
-    return loadedExpeditions
+    return [expeditionMarkers, expeditionRoute]
 }
 
 /**
