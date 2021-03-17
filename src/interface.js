@@ -74,6 +74,19 @@ export function createAddToExpeditionButton(id, label, map, interfaceid, expedit
     return button;
 }
 
+export function updateAddToExpeditionButton(expeditions, map){
+    let button = document.querySelector(".addToExpedition-button")
+    button.addEventListener('click', async function(){
+        let allElements = getAllElementsFromArray(expeditions)
+        addOnClickToAllElements(allElements, map);
+        changeExplanationText("editStart")
+        toggleExpeditionFormVisibility()
+        toggleFormsVisibility()
+        hideNewAndAddButtons()
+        showCancelButton()
+    })
+}
+
 /**
  * Creates and returns a button for cancelling for the interface.
  * @param {string} id - ID for the button
@@ -515,10 +528,12 @@ function addOnClickToAllElements(array, map){
             }
         } else {
             if(array[i] !== null) {
+                console.log(array[i]._path)
                 array[i]._events.click = [];
-                array[i].on('click', function(){
+                array[i].addEventListener('click', function(){
                     prepareMapForEdit(map, array, array[i].expId)
                 })
+                console.log(array[i]._events.click)
             }
         }
 
